@@ -68,6 +68,9 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 /* ---------- 표지 ---------- */
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
 .hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+.hero .eyebrow{display:table;margin-bottom:14px}
+.made-badge{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:7px 16px;font-weight:800;font-size:15px;line-height:1.35;box-shadow:3px 3px 0 var(--ink);transform:rotate(-1.5deg);margin-bottom:20px}
+.made-badge .ico{flex:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;font-size:12px}
 .hero h1{font-size:clamp(40px,6.6vw,82px);font-weight:900;letter-spacing:-.05em;line-height:1.08}
 .hero .lead{margin-top:22px}
 .hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
@@ -169,6 +172,7 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   .sec{padding:72px 20px}
   .hero{min-height:auto;padding-top:40px}
   .hero-grid,.report-grid{grid-template-columns:1fr}
+  .made-badge{font-size:13.5px;padding:6px 12px}
   .hero-art{height:380px;max-width:420px;margin:0 auto;width:100%}
   .doc-card{width:230px;padding:14px}
   .nenep-hero{width:170px;left:0}
@@ -257,6 +261,7 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   <div class="wrap hero-grid">
     <div>
       <span class="eyebrow">결재 서류 제 2026-001호</span>
+      <a href="#howto" class="made-badge" style="text-decoration:none"><span class="ico">⚡</span>이 페이지는 0원, 20분 만에 AI가 만들었습니다</a>
       <h1>AI 인턴이<br>또 <mark>사고</mark>를<br>쳤습니다.</h1>
       <p class="lead">AI 인턴 <b>‘네넵이’</b>가 일하다 낸 진짜 사고를 시말서로 정식 고백하는 유튜브 채널입니다. 사장님은 감독만 하고, 영상은 AI가 처음부터 끝까지 만듭니다.</p>
       <div class="hero-btns">

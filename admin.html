@@ -45,6 +45,7 @@ mark{background:var(--lime);color:inherit;padding:0 .12em;border-radius:8px}
 .field em{font-style:normal;font-weight:600;color:#888}
 input[type=text],input[type=password],textarea{width:100%;font:inherit;font-size:16px;padding:11px 14px;border:2px solid var(--ink);border-radius:10px;background:#fff;outline:none;color:var(--ink)}
 textarea{resize:vertical;min-height:96px}
+textarea.code{min-height:220px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;white-space:pre;overflow:auto}
 input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
 .bad{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(229,72,77,.25)!important}
 .err{color:var(--red);font-weight:700;font-size:14px;min-height:22px;margin-top:8px}
@@ -83,9 +84,9 @@ input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
 .block h2{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
 .num{width:32px;height:32px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-size:15px;background:var(--yellow);flex:none}
 .block>.desc{margin-bottom:14px}
+.ok{font-weight:800}
 
 .conn{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.conn .ok{font-weight:800}
 .conn .acts{display:flex;gap:8px;flex-wrap:wrap}
 
 .notice-preview{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--yellow);border:2px solid var(--ink);border-radius:12px;padding:10px 16px;font-weight:800;font-size:15px;margin-bottom:14px;text-align:center}
@@ -104,6 +105,24 @@ input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
 .sw input:checked+i{outline:3px solid var(--ink);outline-offset:3px}
 .sw input:focus-visible+i{box-shadow:0 0 0 3px var(--sky)}
 
+/* index.html 바꾸기 · 되돌리기 */
+.checks{list-style:none;margin-top:10px;font-size:14px}
+.checks li{padding:7px 12px;border-radius:8px;margin-top:6px;font-weight:700}
+.checks .c-block{background:#FFF1F1;color:#C0303A}
+.checks .c-warn{background:#FFF6DA;color:#7A5200}
+.checks .c-ok{background:#EAF7EE;color:#1D7A3A}
+.idx-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hist-box{margin-top:20px;border-top:2px dashed #ccc;padding-top:14px}
+.hist-box summary,.hist-title{font-weight:800;font-size:15px;cursor:pointer}
+.hist-title{cursor:default}
+.hist{margin-top:10px}
+.hist-list{list-style:none;margin-top:12px;border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:#fff}
+.hist-list li{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid #e3e3e3;font-size:14px;flex-wrap:wrap}
+.hist-list li:last-child{border-bottom:none}
+.hist-list .when{font-weight:800;flex:none;min-width:88px}
+.hist-list .what{flex:1;min-width:120px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-list .now{font-size:12px;background:var(--lime);border:2px solid var(--ink);border-radius:6px;padding:0 8px;font-weight:800}
+
 .savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:2px solid var(--ink);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .savebar .msg{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#555}
 .dot{width:10px;height:10px;border-radius:50%;background:#ccc;flex:none}
@@ -121,6 +140,7 @@ input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
   .row2 .field+.field{margin-top:14px}
   .savebar .acts{width:100%}
   .savebar .acts .btn{flex:1}
+  .idx-acts .btn{flex:1}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -228,21 +248,27 @@ input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
     <div class="adm-head">
       <span class="eyebrow">관리자 결재실</span>
       <h1>고치고 저장하면 <mark>홈페이지에 바로</mark> 올라가요.</h1>
-      <p class="desc" style="margin-top:8px">저장하면 깃허브의 data.json이 바뀌고, 1~2분 뒤 홈페이지에 반영돼요.</p>
+      <p class="desc" style="margin-top:8px">저장하면 깃허브의 파일이 바뀌고, 1분 안팎으로 홈페이지에 반영돼요.</p>
     </div>
     <div class="warn" id="pwWarn" hidden>⚠ 지금 비밀번호가 12자보다 짧아요. admin.html이 공개 저장소에 있으니 더 긴 비밀번호로 바꾸는 걸 추천해요.</div>
 
     <section class="block">
       <h2><span class="num">1</span>깃허브 연결</h2>
-      <div class="card conn">
-        <div>
-          <p class="ok" id="connStatus">불러오는 중…</p>
-          <p class="desc" id="connHint"></p>
+      <div class="card">
+        <div class="conn">
+          <div>
+            <p class="ok" id="connStatus">불러오는 중…</p>
+            <p class="desc" id="connHint"></p>
+          </div>
+          <div class="acts">
+            <button class="btn btn-white btn-sm" id="reload">↻ 새로 불러오기</button>
+            <button class="btn btn-white btn-sm" id="retoken">토큰 다시 등록</button>
+          </div>
         </div>
-        <div class="acts">
-          <button class="btn btn-white btn-sm" id="reload">↻ 새로 불러오기</button>
-          <button class="btn btn-white btn-sm" id="retoken">토큰 다시 등록</button>
-        </div>
+        <details class="hist-box" id="dataHistBox">
+          <summary>↩ 공지·링크·시리즈(data.json) 이전 판으로 되돌리기</summary>
+          <div class="hist" id="dataHist"></div>
+        </details>
       </div>
     </section>
 
@@ -274,6 +300,28 @@ input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
         <div class="series-edit" id="seriesEdit"></div>
       </section>
     </div>
+
+    <section class="block" id="indexBlock" hidden>
+      <h2><span class="num">5</span>index.html 바꾸기</h2>
+      <p class="desc">채팅에서 받은 새 index.html 코드를 통째로 붙여 넣고 바꾸면 홈페이지 화면이 바뀌어요. 아래쪽 저장 바는 2~4번 내용만 저장해요.</p>
+      <div class="card">
+        <p class="ok" id="idxStatus">불러오는 중…</p>
+        <p class="desc" id="idxHint"></p>
+        <label class="field"><span>새 index.html 코드 <em id="idxSize">0KB</em></span>
+          <textarea id="indexCode" class="code" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="&lt;!DOCTYPE html&gt;로 시작해서 &lt;/html&gt;로 끝나는 코드 전체를 붙여 넣어 주세요"></textarea>
+        </label>
+        <ul class="checks" id="idxChecks"></ul>
+        <div class="idx-acts">
+          <button class="btn btn-white btn-sm" id="idxPreview" disabled>👀 미리보기</button>
+          <button class="btn btn-red btn-sm" id="idxSave" disabled>🔁 index.html 바꾸기</button>
+          <button class="btn btn-white btn-sm" id="idxClear">지우기</button>
+        </div>
+        <div class="hist-box">
+          <p class="hist-title">↩ index.html 이전 판으로 되돌리기</p>
+          <div class="hist" id="idxHist"></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <div class="savebar" id="savebar">
@@ -297,30 +345,37 @@ const SALT = "ai-simalseo-admin-v1";
 const REPO = "aisimalseo/aisimalseo-site";
 const BRANCH = "main";
 const FILE = "data.json";
+const INDEX_FILE = "index.html";
 const SITE_URL = "https://aisimalseo.github.io/aisimalseo-site/";
-const API = "https://api.github.com/repos/" + REPO + "/contents/" + FILE;
 const TOKEN_KEY = "simalseo-gh-token";
+const contentsUrl = p => "https://api.github.com/repos/" + REPO + "/contents/" + p;
+const API = contentsUrl(FILE);
 
 const COLORS = { sky:'#8ED4F5', yellow:'#FFC93C', orange:'#F2994A', lime:'#D7F26B', pink:'#FFAFB8' };
 const $ = s => document.querySelector(s);
 
-let PW = null;        // 로그인 비밀번호 (메모리에만, 새로고침하면 사라짐)
+let PW = null;        // 로그인 비밀번호 (메모리에만)
 let TOKEN = null;     // 풀어 둔 토큰 (메모리에만)
-let SHA = null;       // 깃허브 data.json의 현재 버전 표시
-let ORIGINAL = null;  // 불러온(또는 마지막으로 저장한) 내용
+let SHA = null;       // data.json 현재 버전
+let ORIGINAL = null;  // data.json 불러온(또는 마지막으로 저장한) 내용
 let lastSaved = '';
+let INDEX_SHA = null; // index.html 현재 버전
+let INDEX_TEXT = '';  // index.html 현재 내용
 
 function toast(msg){
   const t = $('#toast');
   t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 3000);
+  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 3200);
 }
 function show(id){
   ['#screen-setup','#screen-login','#screen-token','#screen-editor'].forEach(s => $(s).hidden = (s !== id));
 }
 const clone = o => JSON.parse(JSON.stringify(o));
-const hhmm = () => { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
-const stamp = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + hhmm(); };
+const pad = n => String(n).padStart(2, '0');
+const hhmm = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const stamp = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + hhmm(); };
+const byteLen = s => new TextEncoder().encode(s).length;
+const kb = n => (n / 1024).toFixed(1) + 'KB';
 
 /* ---------- 암호 도구 ---------- */
 async function sha256(text){
@@ -335,6 +390,7 @@ function toB64(bytes){
   return btoa(s);
 }
 const fromB64 = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+const textToB64 = t => toB64(new TextEncoder().encode(t));
 
 async function deriveKey(pw, salt){
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
@@ -358,23 +414,34 @@ function setStored(v){ try { localStorage.setItem(TOKEN_KEY, v); return true; } 
 function clearStored(){ try { localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
 
 /* ---------- 깃허브 ---------- */
-async function gh(method, body){
-  const url = method === 'GET' ? API + '?ref=' + BRANCH : API;
+async function ghReq(url, method, body){
+  method = method || 'GET';
   const headers = { 'Authorization':'Bearer ' + TOKEN, 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' };
   if (body) headers['Content-Type'] = 'application/json';
   const r = await fetch(url, { method, headers, cache:'no-store', body: body ? JSON.stringify(body) : undefined });
   let json = null; try { json = await r.json(); } catch (e) {}
   return { status:r.status, ok:r.ok, json };
 }
+// data.json 전용 (기존 동작 그대로)
+function gh(method, body){
+  return method === 'GET' ? ghReq(API + '?ref=' + BRANCH) : ghReq(API, method, body);
+}
+const getFile = (path, ref) => ghReq(contentsUrl(path) + '?ref=' + (ref || BRANCH));
+const putFile = (path, b64, sha, message) => ghReq(contentsUrl(path), 'PUT', { message, content:b64, sha, branch:BRANCH });
+
 function isConflict(res){ return res.status === 409 || (res.status === 422 && /sha/i.test((res.json && res.json.message) || '')); }
-function errText(res){
+function errText(res, name){
+  name = name || FILE;
   const m = (res.json && res.json.message) || '';
   if (res.status === 401) return '토큰이 만료됐거나 잘못됐어요. "토큰 다시 등록"을 눌러 새 토큰을 넣어 주세요.';
   if (res.status === 403 && /rate limit/i.test(m)) return '깃허브 요청이 너무 많아요. 잠시 뒤 다시 해 주세요.';
   if (res.status === 403) return '토큰에 쓰기 권한이 없어요. Contents 권한을 "Read and write"로 만든 토큰이 필요해요.';
-  if (res.status === 404) return '저장소나 data.json을 찾지 못했어요. 토큰이 aisimalseo-site 저장소에 연결돼 있는지, data.json을 올렸는지 확인해 주세요.';
-  if (isConflict(res)) return '그사이 다른 곳에서 data.json이 바뀌었어요. "새로 불러오기"를 누른 뒤 다시 고쳐 주세요.';
+  if (res.status === 404) return name + '을 찾지 못했어요. 토큰이 aisimalseo-site 저장소에 연결돼 있는지, 파일이 올라가 있는지 확인해 주세요.';
+  if (isConflict(res)) return '그사이 다른 곳에서 ' + name + '이 바뀌었어요. 새로 불러온 뒤 다시 해 주세요.';
   return '깃허브 오류가 났어요 (코드 ' + res.status + '). 잠시 뒤 다시 해 주세요.';
+}
+function decodeContent(b64){
+  return new TextDecoder().decode(fromB64(b64.replace(/\s/g, '')));
 }
 
 // 비밀번호 보기/숨기기
@@ -435,9 +502,12 @@ async function afterLogin(){
   }
 }
 
+function hasUnsaved(){ return isDirty() || !!$('#indexCode').value.trim(); }
 function logout(){
-  if (isDirty() && !confirm('저장하지 않은 내용이 있어요. 그래도 나갈까요?')) return;
+  if (hasUnsaved() && !confirm('저장하지 않은 내용이 있어요. 그래도 나갈까요?')) return;
   PW = null; TOKEN = null;
+  $('#indexCode').value = '';
+  ORIGINAL = null;
   location.reload();
 }
 $('#logout').addEventListener('click', logout);
@@ -473,7 +543,7 @@ $('#tokenForm').addEventListener('submit', async e => {
 });
 $('#retoken').addEventListener('click', () => {
   if (!confirm('저장된 토큰을 지우고 새로 등록할까요?')) return;
-  if (isDirty() && !confirm('저장하지 않은 내용이 사라져요. 계속할까요?')) return;
+  if (hasUnsaved() && !confirm('저장하지 않은 내용이 사라져요. 계속할까요?')) return;
   clearStored(); TOKEN = null; ORIGINAL = null;
   showToken('');
 });
@@ -482,13 +552,12 @@ $('#retoken').addEventListener('click', () => {
 function openEditor(preloaded){
   show('#screen-editor');
   $('#pwWarn').hidden = !(PW && PW.length < 12);
+  $('#indexBlock').hidden = false;
   loadRemote(preloaded);
+  loadIndexInfo();
 }
 function setConn(status, hint){ $('#connStatus').textContent = status; $('#connHint').textContent = hint || ''; }
 
-function decodeContent(b64){
-  return new TextDecoder().decode(fromB64(b64.replace(/\s/g, '')));
-}
 function normalize(d){
   d = d && typeof d === 'object' ? d : {};
   d.notice = Object.assign({ text:'', link:'' }, d.notice || {});
@@ -508,7 +577,12 @@ async function loadRemote(res){
   if (!res.ok) { setConn('불러오기 실패', errText(res)); $('#save').disabled = true; return; }
   let data;
   try { data = normalize(JSON.parse(decodeContent(res.json.content))); }
-  catch (e) { setConn('data.json 내용이 깨져 있어요', '깃허브에서 data.json을 직접 열어 괄호·쉼표가 맞는지 확인해 주세요.'); return; }
+  catch (e) {
+    setConn('data.json 내용이 깨져 있어요', '아래 "이전 판으로 되돌리기"를 열어 멀쩡했던 판으로 돌려 주세요.');
+    $('#editArea').hidden = true; $('#save').disabled = true;
+    $('#dataHistBox').open = true;
+    return;
+  }
   SHA = res.json.sha;
   ORIGINAL = clone(data);
   lastSaved = '';
@@ -522,6 +596,8 @@ async function loadRemote(res){
 $('#reload').addEventListener('click', () => {
   if (isDirty() && !confirm('저장하지 않은 내용이 사라져요. 새로 불러올까요?')) return;
   loadRemote();
+  loadIndexInfo();
+  if ($('#dataHistBox').open) loadHistory(FILE, $('#dataHist'));
 });
 
 function buildSeries(n){
@@ -586,6 +662,7 @@ function isDirty(){
 }
 
 function refresh(){
+  if (!ORIGINAL) return;
   const text = $('#noticeText').value.trim();
   const pv = $('#noticePreview');
   $('#noticeCount').textContent = $('#noticeText').value.length + '/60';
@@ -609,9 +686,8 @@ function refresh(){
   const bar = $('#savebar');
   bar.classList.toggle('dirty', dirty);
   bar.classList.toggle('saved', !dirty && !!lastSaved);
-  $('#dirtyMsg').textContent = !ORIGINAL ? '불러오는 중…'
-    : dirty ? '고친 내용이 있어요 (아직 저장 안 됨)'
-    : lastSaved ? lastSaved + ' 저장됨 · 1~2분 뒤 홈페이지에 반영'
+  $('#dirtyMsg').textContent = dirty ? '고친 내용이 있어요 (아직 저장 안 됨)'
+    : lastSaved ? lastSaved + ' 저장됨 · 1분 안팎으로 홈페이지에 반영'
     : '고친 내용 없음';
   $('#revert').disabled = !dirty;
 }
@@ -652,14 +728,14 @@ $('#save').addEventListener('click', async () => {
   const btn = $('#save');
   btn.disabled = true; btn.textContent = '저장하는 중…';
   try {
-    const content = toB64(new TextEncoder().encode(JSON.stringify(d, null, 2) + '\n'));
-    const res = await gh('PUT', { message:'관리자 저장 (' + stamp() + ')', content, sha:SHA, branch:BRANCH });
+    const res = await gh('PUT', { message:'관리자 저장 (' + stamp() + ')', content:textToB64(JSON.stringify(d, null, 2) + '\n'), sha:SHA, branch:BRANCH });
     if (!res.ok) { toast(errText(res)); if (isConflict(res)) setConn('⚠ 다른 곳에서 먼저 바뀌었어요', errText(res)); return; }
     SHA = res.json.content.sha;
     ORIGINAL = clone(d);
     lastSaved = hhmm();
     refresh();
-    toast('결재 완료! 1~2분 뒤 홈페이지에 반영돼요.');
+    if ($('#dataHistBox').open) loadHistory(FILE, $('#dataHist'));
+    toast('결재 완료! 1분 안팎으로 홈페이지에 반영돼요.');
   } catch (e) {
     toast('깃허브에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.');
   } finally {
@@ -667,7 +743,166 @@ $('#save').addEventListener('click', async () => {
   }
 });
 
-window.addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+/* ---------- index.html 바꾸기 ---------- */
+async function loadIndexInfo(){
+  $('#idxStatus').textContent = '지금 index.html 불러오는 중…';
+  $('#idxHint').textContent = '';
+  try {
+    const res = await getFile(INDEX_FILE);
+    if (!res.ok) { $('#idxStatus').textContent = 'index.html을 불러오지 못했어요'; $('#idxHint').textContent = errText(res, INDEX_FILE); return; }
+    INDEX_SHA = res.json.sha;
+    INDEX_TEXT = decodeContent(res.json.content);
+    $('#idxStatus').textContent = '지금 index.html · ' + kb(byteLen(INDEX_TEXT));
+  } catch (e) {
+    $('#idxStatus').textContent = '깃허브에 연결하지 못했어요';
+    $('#idxHint').textContent = '인터넷 연결을 확인한 뒤 위의 "새로 불러오기"를 눌러 주세요.';
+  }
+  updateIndexChecks();
+  loadHistory(INDEX_FILE, $('#idxHist'));
+}
+
+function checkIndex(code){
+  const t = code.trim();
+  const blocks = [], warns = [];
+  if (!t) return { blocks, warns, empty:true };
+  if (!/^<!doctype html/i.test(t)) blocks.push('맨 앞이 <!DOCTYPE html>이 아니에요. 앞부분이 빠졌거나 다른 글자가 같이 복사됐어요.');
+  if (!/<\/html>$/i.test(t)) blocks.push('맨 끝 </html>이 없어요. 코드 끝부분이 잘렸어요.');
+  if (INDEX_TEXT && t === INDEX_TEXT.trim()) blocks.push('지금 홈페이지의 index.html과 똑같아요.');
+  if (!/data\.json/.test(t)) warns.push('data.json을 읽는 부분이 없어요. 이대로 바꾸면 공지·시리즈가 화면에서 사라져요.');
+  if (INDEX_TEXT && byteLen(t) < byteLen(INDEX_TEXT) / 2) warns.push('지금 파일(' + kb(byteLen(INDEX_TEXT)) + ')보다 크기가 절반 이하로 줄었어요. 일부만 복사됐을 수 있어요.');
+  return { blocks, warns, empty:false };
+}
+function updateIndexChecks(){
+  const code = $('#indexCode').value;
+  const r = checkIndex(code);
+  $('#idxSize').textContent = kb(byteLen(code.trim()));
+  const ul = $('#idxChecks');
+  ul.innerHTML = '';
+  const add = (cls, msg) => { const li = document.createElement('li'); li.className = cls; li.textContent = msg; ul.appendChild(li); };
+  if (!r.empty) {
+    r.blocks.forEach(m => add('c-block', '⛔ ' + m));
+    r.warns.forEach(m => add('c-warn', '⚠ ' + m));
+    if (!r.blocks.length && !r.warns.length) add('c-ok', '✅ 검사 통과: 끝까지 복사됐고 data.json 읽기도 들어 있어요.');
+  }
+  $('#idxPreview').disabled = r.empty;
+  $('#idxSave').disabled = r.empty || r.blocks.length > 0 || !INDEX_SHA;
+}
+$('#indexCode').addEventListener('input', updateIndexChecks);
+$('#idxClear').addEventListener('click', () => {
+  if ($('#indexCode').value.trim() && !confirm('붙여 넣은 코드를 지울까요?')) return;
+  $('#indexCode').value = ''; updateIndexChecks();
+});
+
+// 미리보기: 실제 data.json을 읽어 오게 바꿔서 새 탭에서 열기
+$('#idxPreview').addEventListener('click', () => {
+  let code = $('#indexCode').value.trim();
+  const inject = '<script>(function(){var S=' + JSON.stringify(SITE_URL) + ';var f=window.fetch;window.fetch=function(u,o){if(typeof u==="string"&&/^data\\.json/.test(u))u=S+u;return f.call(this,u,o);};})();<\/script>';
+  const banner = '<div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#1B1E1C;color:#FFC93C;font:800 13px sans-serif;padding:7px 12px;border-radius:8px">미리보기 · 아직 저장 안 됨</div>';
+  code = /<head[^>]*>/i.test(code) ? code.replace(/<head[^>]*>/i, m => m + inject) : inject + code;
+  code = /<\/body>/i.test(code) ? code.replace(/<\/body>/i, banner + '</body>') : code + banner;
+  const url = URL.createObjectURL(new Blob([code], { type:'text/html;charset=utf-8' }));
+  const w = window.open(url, '_blank');
+  if (!w) toast('새 탭이 막혔어요. 브라우저에서 팝업을 허용해 주세요.');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+});
+
+$('#idxSave').addEventListener('click', async () => {
+  const code = $('#indexCode').value.trim();
+  const r = checkIndex(code);
+  if (r.empty || r.blocks.length) { toast(r.blocks[0] || '코드를 붙여 넣어 주세요.'); return; }
+  if (r.warns.length && !confirm('⚠ ' + r.warns.join('\n⚠ ') + '\n\n그래도 저장할까요?')) return;
+  if (!confirm('홈페이지의 index.html을 이 코드로 바꿀까요?\n문제가 생기면 아래 "바로 전 판으로 되돌리기"로 돌아갈 수 있어요.')) return;
+  const btn = $('#idxSave');
+  btn.disabled = true; btn.textContent = '바꾸는 중…';
+  try {
+    const res = await putFile(INDEX_FILE, textToB64(code + '\n'), INDEX_SHA, '관리자: index.html 교체 (' + stamp() + ')');
+    if (!res.ok) { toast(errText(res, INDEX_FILE)); if (isConflict(res)) loadIndexInfo(); return; }
+    INDEX_SHA = res.json.content.sha;
+    INDEX_TEXT = code + '\n';
+    $('#indexCode').value = '';
+    toast('결재 완료! 1분 안팎으로 홈페이지에 반영돼요.');
+    loadIndexInfo();
+  } catch (e) {
+    toast('깃허브에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.');
+  } finally {
+    btn.textContent = '🔁 index.html 바꾸기';
+    updateIndexChecks();
+  }
+});
+
+/* ---------- 이전 판으로 되돌리기 (data.json · index.html 공통) ---------- */
+const fmtWhen = c => { const d = new Date((c.commit.committer || c.commit.author).date); return pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const firstLine = c => (c.commit.message || '').split('\n')[0];
+
+async function loadHistory(path, box){
+  box.innerHTML = '<p class="desc">이전 판 불러오는 중…</p>';
+  try {
+    const res = await ghReq('https://api.github.com/repos/' + REPO + '/commits?path=' + encodeURIComponent(path) + '&sha=' + BRANCH + '&per_page=6');
+    if (!res.ok) { box.innerHTML = ''; const p = document.createElement('p'); p.className = 'desc'; p.textContent = errText(res, path); box.appendChild(p); return; }
+    renderHistory(path, box, Array.isArray(res.json) ? res.json : []);
+  } catch (e) {
+    box.innerHTML = '<p class="desc">이전 판을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.</p>';
+  }
+}
+
+function renderHistory(path, box, list){
+  box.innerHTML = '';
+  if (list.length < 2) { box.innerHTML = '<p class="desc">되돌릴 이전 판이 아직 없어요.</p>'; return; }
+  const big = document.createElement('button');
+  big.className = 'btn btn-yellow btn-sm';
+  big.textContent = '↩ 바로 전 판(' + fmtWhen(list[1]) + ')으로 되돌리기';
+  big.addEventListener('click', () => revertTo(path, list[1], box));
+  box.appendChild(big);
+
+  const ul = document.createElement('ul');
+  ul.className = 'hist-list';
+  list.forEach((c, i) => {
+    const li = document.createElement('li');
+    const when = document.createElement('span'); when.className = 'when'; when.textContent = fmtWhen(c);
+    const what = document.createElement('span'); what.className = 'what'; what.textContent = firstLine(c); what.title = firstLine(c);
+    li.append(when, what);
+    if (i === 0) {
+      const now = document.createElement('span'); now.className = 'now'; now.textContent = '지금 판';
+      li.appendChild(now);
+    } else {
+      const b = document.createElement('button');
+      b.className = 'btn btn-white btn-sm'; b.textContent = '이 판으로';
+      b.addEventListener('click', () => revertTo(path, c, box));
+      li.appendChild(b);
+    }
+    ul.appendChild(li);
+  });
+  box.appendChild(ul);
+}
+
+async function revertTo(path, c, box){
+  if (path === FILE && isDirty() && !confirm('2~4번에서 고치던 내용이 사라져요. 계속할까요?')) return;
+  if (!confirm(path + '을 ' + fmtWhen(c) + ' 판으로 되돌릴까요?\n메모: ' + firstLine(c))) return;
+  box.querySelectorAll('button').forEach(b => b.disabled = true);
+  try {
+    const old = await getFile(path, c.sha);
+    if (!old.ok) { toast(errText(old, path)); return; }
+    const cur = await getFile(path);
+    if (!cur.ok) { toast(errText(cur, path)); return; }
+    const oldB64 = old.json.content.replace(/\s/g, '');
+    if (oldB64 === cur.json.content.replace(/\s/g, '')) { toast('고른 판이 지금 판과 내용이 같아요.'); return; }
+    const res = await putFile(path, oldB64, cur.json.sha, '되돌리기: ' + path + ' ← ' + fmtWhen(c) + ' 판 (' + stamp() + ')');
+    if (!res.ok) { toast(errText(res, path)); return; }
+    toast('되돌렸어요! 1분 안팎으로 홈페이지에 반영돼요.');
+    if (path === FILE) { await loadRemote(); loadHistory(FILE, box); }
+    else { await loadIndexInfo(); }
+  } catch (e) {
+    toast('깃허브에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.');
+  } finally {
+    box.querySelectorAll('button').forEach(b => b.disabled = false);
+  }
+}
+
+$('#dataHistBox').addEventListener('toggle', () => {
+  if ($('#dataHistBox').open) loadHistory(FILE, $('#dataHist'));
+});
+
+window.addEventListener('beforeunload', e => { if (hasUnsaved()) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 </body>
 </html>

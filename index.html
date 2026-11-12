@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI 시말서 — AI 인턴 네넵이의 사고 고백 채널</title>
 <meta name="description" content="AI 인턴 네넵이가 일하다 낸 실제 사고를 시말서로 고백하는 유튜브 채널. 영상도 AI가 만듭니다.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><line x1='50' y1='20' x2='50' y2='8' stroke='%231B1E1C' stroke-width='5' stroke-linecap='round'/><circle cx='50' cy='8' r='6' fill='%23E5484D' stroke='%231B1E1C' stroke-width='3'/><circle cx='50' cy='58' r='38' fill='%238ED4F5' stroke='%231B1E1C' stroke-width='5'/><rect x='24' y='40' width='52' height='34' rx='15' fill='%23EAF8FF' stroke='%231B1E1C' stroke-width='4'/><ellipse cx='40' cy='56' rx='4.5' ry='6' fill='%231B1E1C'/><ellipse cx='60' cy='56' rx='4.5' ry='6' fill='%231B1E1C'/></svg>">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI 시말서">
+<meta property="og:title" content="AI 시말서 — AI 인턴 네넵이의 사고 고백 채널">
+<meta property="og:description" content="AI 인턴 네넵이가 일하다 낸 진짜 사고를 시말서로 고백합니다. 영상에 나온 사장님 지침도 여기서 복사해 가세요.">
+<meta property="og:url" content="https://aisimalseo.github.io/aisimalseo-site/">
+<meta property="og:image" content="https://aisimalseo.github.io/aisimalseo-site/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
@@ -70,7 +80,12 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 .yt-dot{width:18px;height:13px;background:#fff;border-radius:4px;position:relative;display:inline-block}
 .yt-dot::after{content:"";position:absolute;left:7px;top:3.5px;border-left:6px solid var(--red);border-top:3px solid transparent;border-bottom:3px solid transparent}
 
-.stamp{display:inline-grid;place-items:center;width:66px;height:66px;border:3px solid var(--red);border-radius:50%;color:var(--red);font-weight:900;font-size:13px;line-height:1.1;text-align:center;transform:rotate(-12deg);background:rgba(255,255,255,.6)}
+.stamp{display:inline-grid;place-items:center;width:66px;height:66px;border:3px solid var(--red);border-radius:50%;color:var(--red);font-weight:900;font-size:13px;line-height:1.1;text-align:center;transform:rotate(-12deg);background:rgba(255,255,255,.6);flex:none}
+
+/* 말풍선 (기본: 꼬리 아래 / tail-left: 꼬리 왼쪽) */
+.bubble{position:absolute;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 14px;font-weight:800;font-size:15px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap;line-height:1.4}
+.bubble::after{content:"";position:absolute;bottom:-10px;left:22px;width:14px;height:14px;background:#fff;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg)}
+.bubble.tail-left::after{left:-9px;top:50%;bottom:auto;margin-top:-7px;border-right:none;border-left:2px solid var(--ink)}
 
 /* ---------- 표지 ---------- */
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
@@ -97,8 +112,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 .doc-lines .hl{background:linear-gradient(transparent 55%,var(--yellow) 55%)}
 
 .nenep-hero{position:absolute;left:4%;bottom:0;width:210px;animation:bob 3s ease-in-out infinite}
-.bubble{position:absolute;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 14px;font-weight:800;font-size:15px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
-.bubble::after{content:"";position:absolute;bottom:-10px;left:22px;width:14px;height:14px;background:#fff;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg)}
 .bubble-hero{left:44%;bottom:240px}
 
 .doodle{position:absolute;z-index:1;opacity:.9;animation:float 6s ease-in-out infinite}
@@ -149,8 +162,9 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 
 /* ---------- 사고 제보 ---------- */
 .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
-.report-left{position:relative}
-.nenep-report{width:150px;margin-top:28px}
+.report-buddy{display:flex;align-items:center;gap:16px;margin-top:28px}
+.report-buddy .bubble{position:relative}
+.nenep-report{width:150px;flex:none}
 .template-box{background:#FFFBE6;border:2px dashed var(--ink);border-radius:16px;padding:24px;position:relative}
 .template-box .label{font-weight:900;font-size:14px;color:var(--red);margin-bottom:10px}
 .template{white-space:pre-line;font-size:16px;font-weight:600;line-height:1.9;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:16px 18px}
@@ -177,23 +191,32 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   .topbar{display:block}
   main,.notice{margin-left:0}
   .notice{font-size:14px;justify-content:flex-start;text-align:left}
+  section[id]{scroll-margin-top:104px}  /* 붙어 있는 메뉴바에 제목이 가리지 않게 */
   .sec{padding:72px 20px}
   .hero{min-height:auto;padding-top:40px}
   .hero-grid,.report-grid{grid-template-columns:1fr}
   .made-badge{font-size:13.5px;padding:6px 12px}
-  .hero-art{height:380px;max-width:420px;margin:0 auto;width:100%}
-  .doc-card{width:230px;padding:14px}
-  .nenep-hero{width:170px;left:0}
-  .bubble-hero{left:36%;bottom:200px}
+  .doodle{display:none}
+
+  /* 첫 화면 그림: 카드 위, 네넵이+말풍선 아래 (겹치지 않게) */
+  .hero-art{height:auto;max-width:420px;width:100%;margin:0 auto;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"card card" "bot bub";align-items:center;column-gap:14px}
+  .doc-card{grid-area:card;position:relative;right:auto;top:auto;justify-self:center;width:min(270px,88%);transform:rotate(3deg);margin:8px 0 26px}
+  .nenep-hero{grid-area:bot;position:relative;left:auto;bottom:auto;width:120px}
+  .bubble-hero{grid-area:bub;position:relative;left:auto;bottom:auto;justify-self:start;white-space:normal}
+  .bubble-hero::after{left:-9px;top:50%;bottom:auto;margin-top:-7px;border-right:none;border-left:2px solid var(--ink)}
+
   .series-grid,.rule-grid{grid-template-columns:1fr}
   .rule-card:nth-child(n){transform:none}
+  .rules-top .btn{width:100%;justify-content:center}
   .report-doc{padding:28px 20px}
   .meta{grid-template-columns:auto 1fr}
   .meta div:nth-child(4n+2){border-right:none}
   .meta div:nth-last-child(-n+4){border-bottom:2px solid var(--ink)}
   .meta div:nth-last-child(-n+2){border-bottom:none}
   .steps li{padding-left:50px}
-  .hide-m{display:none}
+  .sign{flex-wrap:wrap}
+  .nenep-report{width:110px}
+  .report-buddy .bubble{white-space:normal}
   .hero-btns .btn{flex:1 1 100%;justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){
@@ -267,9 +290,9 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 
 <!-- 1. 표지 -->
 <section id="cover" class="sec hero grid-bg">
-  <svg class="doodle hide-m" style="left:4%;top:18%" width="34" height="70" viewBox="0 0 34 70"><path d="M10 20 V54 a7 7 0 0 0 14 0 V12 a10 10 0 0 0 -20 0 V50" fill="none" stroke="#7C8BB8" stroke-width="4" stroke-linecap="round"/></svg>
+  <svg class="doodle" style="left:4%;top:18%" width="34" height="70" viewBox="0 0 34 70"><path d="M10 20 V54 a7 7 0 0 0 14 0 V12 a10 10 0 0 0 -20 0 V50" fill="none" stroke="#7C8BB8" stroke-width="4" stroke-linecap="round"/></svg>
   <svg class="doodle" style="right:6%;bottom:8%;animation-delay:-2s" width="90" height="22" viewBox="0 0 90 22"><rect x="2" y="4" width="66" height="14" fill="#FFC93C" stroke="#1B1E1C" stroke-width="2"/><path d="M68 4 L86 11 L68 18Z" fill="#F6D7B0" stroke="#1B1E1C" stroke-width="2"/><rect x="2" y="4" width="10" height="14" fill="#FFAFB8" stroke="#1B1E1C" stroke-width="2"/></svg>
-  <svg class="doodle hide-m" style="left:38%;bottom:6%;animation-delay:-4s" width="54" height="54" viewBox="0 0 54 54"><rect x="3" y="3" width="48" height="48" fill="#D7F26B" stroke="#1B1E1C" stroke-width="2" transform="rotate(-6 27 27)"/><line x1="12" y1="20" x2="40" y2="17" stroke="#1B1E1C" stroke-width="2"/><line x1="13" y1="30" x2="36" y2="28" stroke="#1B1E1C" stroke-width="2"/></svg>
+  <svg class="doodle" style="left:38%;bottom:6%;animation-delay:-4s" width="54" height="54" viewBox="0 0 54 54"><rect x="3" y="3" width="48" height="48" fill="#D7F26B" stroke="#1B1E1C" stroke-width="2" transform="rotate(-6 27 27)"/><line x1="12" y1="20" x2="40" y2="17" stroke="#1B1E1C" stroke-width="2"/><line x1="13" y1="30" x2="36" y2="28" stroke="#1B1E1C" stroke-width="2"/></svg>
 
   <div class="wrap hero-grid">
     <div>
@@ -391,13 +414,13 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 <!-- 5. 사고 제보 -->
 <section id="report" class="sec">
   <div class="wrap report-grid">
-    <div class="report-left">
+    <div>
       <span class="eyebrow">사고 제보</span>
       <h2>당신의 AI도<br><mark>사고</mark>를 쳤습니까?</h2>
-      <p class="lead">유튜브 댓글로 제보해 주세요. 오른쪽 양식을 복사해서 붙여 넣으면 접수가 훨씬 빨라집니다.</p>
-      <div style="display:flex;align-items:flex-end;gap:10px">
+      <p class="lead">유튜브 댓글로 제보해 주세요. 양식을 복사해서 붙여 넣으면 접수가 훨씬 빨라집니다.</p>
+      <div class="report-buddy">
         <svg class="nenep-report" viewBox="0 0 200 230" aria-hidden="true"><use href="#nenep"/></svg>
-        <div class="bubble" style="position:relative;margin-bottom:110px">저만 그런 거 아니죠…?</div>
+        <div class="bubble tail-left">저만 그런 거 아니죠…?</div>
       </div>
     </div>
 
@@ -444,7 +467,7 @@ AI 이름:
       "name": "시말서",
       "sub": "사고 고백",
       "desc": "네넵이가 일하다 낸 실제 사고를 경위부터 원인, 재발 방지 대책까지 시말서로 고백합니다.",
-      "video": "",
+      "video": "https://youtu.be/6xTnWEV0TkI",
       "color": "sky"
     },
     {
@@ -471,7 +494,7 @@ AI 이름:
 
 <script>
 /* ===== 채널·지침 영상 주소는 여기서 (시리즈 영상은 관리자 페이지에서) ===== */
-const CHANNEL_URL = "";   // 예: "https://www.youtube.com/@채널핸들"
+const CHANNEL_URL = "https://www.youtube.com/@aisimalseo";
 const VIDEO_URLS = {
   rule1: "",  // 제1조가 나온 영상
   rule2: "",  // 제2조가 나온 영상
@@ -510,8 +533,8 @@ function linkTo(a, url){
   document.getElementById('noticeText').textContent = text;
   const body = document.getElementById('noticeBody');
   const link = (n.link || '').trim();
-  if (/^https?:\/\//.test(link)) { body.href = link; body.target = '_blank'; body.rel = 'noopener'; body.innerHTML += ' →'; }
-  else if (/^#/.test(link)) { body.href = link; body.innerHTML += ' →'; }
+  if (/^https?:\/\//.test(link)) { body.href = link; body.target = '_blank'; body.rel = 'noopener'; body.append(' →'); }
+  else if (/^#/.test(link)) { body.href = link; body.append(' →'); }
   document.getElementById('notice').hidden = false;
   document.getElementById('noticeClose').addEventListener('click', () => { document.getElementById('notice').hidden = true; });
 })();

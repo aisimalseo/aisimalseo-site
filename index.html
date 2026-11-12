@@ -126,6 +126,7 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 .folder .sub{display:inline-block;font-size:13px;font-weight:700;background:var(--c);padding:1px 10px;border-radius:6px;margin:6px 0 14px;align-self:flex-start}
 .folder p{color:#333;flex:1}
 .folder .go{margin-top:20px;font-weight:800;font-size:15px;text-decoration:none;align-self:flex-start;border-bottom:2px solid var(--ink)}
+.load-fail{grid-column:1/-1;background:#fff;border:2px dashed var(--ink);border-radius:14px;padding:22px;font-weight:700;color:#555}
 
 /* ---------- 사장님 지침 ---------- */
 .rules{background:var(--orange);color:#fff}
@@ -191,20 +192,17 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   .topbar{display:block}
   main,.notice{margin-left:0}
   .notice{font-size:14px;justify-content:flex-start;text-align:left}
-  section[id]{scroll-margin-top:104px}  /* 붙어 있는 메뉴바에 제목이 가리지 않게 */
+  section[id]{scroll-margin-top:104px}
   .sec{padding:72px 20px}
   .hero{min-height:auto;padding-top:40px}
   .hero-grid,.report-grid{grid-template-columns:1fr}
   .made-badge{font-size:13.5px;padding:6px 12px}
   .doodle{display:none}
-
-  /* 첫 화면 그림: 카드 위, 네넵이+말풍선 아래 (겹치지 않게) */
   .hero-art{height:auto;max-width:420px;width:100%;margin:0 auto;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"card card" "bot bub";align-items:center;column-gap:14px}
   .doc-card{grid-area:card;position:relative;right:auto;top:auto;justify-self:center;width:min(270px,88%);transform:rotate(3deg);margin:8px 0 26px}
   .nenep-hero{grid-area:bot;position:relative;left:auto;bottom:auto;width:120px}
   .bubble-hero{grid-area:bub;position:relative;left:auto;bottom:auto;justify-self:start;white-space:normal}
   .bubble-hero::after{left:-9px;top:50%;bottom:auto;margin-top:-7px;border-right:none;border-left:2px solid var(--ink)}
-
   .series-grid,.rule-grid{grid-template-columns:1fr}
   .rule-card:nth-child(n){transform:none}
   .rules-top .btn{width:100%;justify-content:center}
@@ -226,7 +224,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 </head>
 <body>
 
-<!-- 네넵이 (하늘색 동그란 로봇 인턴 · 빨간 넥타이 · 안테나) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="nenep" viewBox="0 0 200 230">
     <line x1="100" y1="46" x2="100" y2="18" stroke="#1B1E1C" stroke-width="5" stroke-linecap="round"/>
@@ -250,13 +247,12 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </symbol>
 </svg>
 
-<!-- 공지 띠 (내용은 아래 site-data 보관함에서 읽어 옴) -->
+<!-- 공지 띠 (내용은 data.json에서 읽어 옴) -->
 <div class="notice" id="notice" hidden>
   <a class="notice-body" id="noticeBody"><span class="tag">공지</span><span id="noticeText"></span></a>
   <button class="notice-close" id="noticeClose" aria-label="공지 닫기">×</button>
 </div>
 
-<!-- 왼쪽 목차 (데스크톱) -->
 <aside class="side">
   <div class="side-card">
     <a href="#cover" class="brand"><svg><use href="#nenep"/></svg>AI 시말서</a>
@@ -271,7 +267,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   <a class="btn btn-red" data-link="subscribe"><span class="yt-dot"></span>구독하기</a>
 </aside>
 
-<!-- 상단 바 (휴대폰) -->
 <header class="topbar">
   <div class="topbar-row">
     <a href="#cover" class="brand" style="padding:0"><svg><use href="#nenep"/></svg>AI 시말서</a>
@@ -288,7 +283,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 
 <main>
 
-<!-- 1. 표지 -->
 <section id="cover" class="sec hero grid-bg">
   <svg class="doodle" style="left:4%;top:18%" width="34" height="70" viewBox="0 0 34 70"><path d="M10 20 V54 a7 7 0 0 0 14 0 V12 a10 10 0 0 0 -20 0 V50" fill="none" stroke="#7C8BB8" stroke-width="4" stroke-linecap="round"/></svg>
   <svg class="doodle" style="right:6%;bottom:8%;animation-delay:-2s" width="90" height="22" viewBox="0 0 90 22"><rect x="2" y="4" width="66" height="14" fill="#FFC93C" stroke="#1B1E1C" stroke-width="2"/><path d="M68 4 L86 11 L68 18Z" fill="#F6D7B0" stroke="#1B1E1C" stroke-width="2"/><rect x="2" y="4" width="10" height="14" fill="#FFAFB8" stroke="#1B1E1C" stroke-width="2"/></svg>
@@ -325,7 +319,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </div>
 </section>
 
-<!-- 2. 시리즈 3종 (카드는 site-data 보관함에서 그림) -->
 <section id="series" class="sec">
   <div class="wrap">
     <span class="eyebrow">시리즈 안내</span>
@@ -335,7 +328,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </div>
 </section>
 
-<!-- 3. 사장님 지침 모음 -->
 <section id="rules" class="sec rules">
   <div class="wrap">
     <div class="rules-top">
@@ -379,7 +371,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </div>
 </section>
 
-<!-- 4. 이 페이지 만든 법 -->
 <section id="howto" class="sec grid-bg">
   <div class="wrap">
     <div style="text-align:center">
@@ -411,7 +402,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </div>
 </section>
 
-<!-- 5. 사고 제보 -->
 <section id="report" class="sec">
   <div class="wrap report-grid">
     <div>
@@ -442,7 +432,6 @@ AI 이름:
 
 </main>
 
-<!-- 마무리 -->
 <footer class="footer">
   <svg viewBox="0 0 200 230" aria-hidden="true"><use href="#nenep"/></svg>
   <h2>네넵이는 오늘도<br>사고 칠 예정입니다.</h2>
@@ -453,59 +442,12 @@ AI 이름:
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- ===== 내용 보관함: 관리자 페이지(admin.html)가 이 부분만 고칩니다 ===== -->
-<script id="site-data" type="application/json">
-{
-  "notice": {
-    "text": "홈페이지 오픈! 영상에 나온 사장님 지침, 여기서 복사해 가세요.",
-    "link": "#rules"
-  },
-  "series": [
-    {
-      "key": "simal",
-      "tab": "제1철",
-      "name": "시말서",
-      "sub": "사고 고백",
-      "desc": "네넵이가 일하다 낸 실제 사고를 경위부터 원인, 재발 방지 대책까지 시말서로 고백합니다.",
-      "video": "https://youtu.be/6xTnWEV0TkI",
-      "color": "sky"
-    },
-    {
-      "key": "silleon",
-      "tab": "제2철",
-      "name": "실전편",
-      "sub": "따라 하기",
-      "desc": "AI로 실제 일을 끝내는 과정을 그대로 보여 줍니다. 지금 보고 계신 이 홈페이지 만들기 같은 것도요.",
-      "video": "",
-      "color": "yellow"
-    },
-    {
-      "key": "sajang",
-      "tab": "제3철",
-      "name": "사장편",
-      "sub": "AI 부리는 법",
-      "desc": "AI를 제대로 부리는 법과 사장님이 직접 만든 규칙 이야기를 들려 드립니다.",
-      "video": "",
-      "color": "orange"
-    }
-  ]
-}
-</script>
-
 <script>
-/* ===== 채널·지침 영상 주소는 여기서 (시리즈 영상은 관리자 페이지에서) ===== */
-const CHANNEL_URL = "https://www.youtube.com/@aisimalseo";
-const VIDEO_URLS = {
-  rule1: "",  // 제1조가 나온 영상
-  rule2: "",  // 제2조가 나온 영상
-  rule3: ""   // 제3조가 나온 영상
-};
-/* ================================================================ */
+/* 바뀌는 내용(공지·링크·시리즈)은 전부 data.json에 있습니다.
+   아래 주소는 data.json을 못 읽었을 때 구독 버튼만이라도 살리기 위한 예비값입니다. */
+const FALLBACK_CHANNEL = "https://www.youtube.com/@aisimalseo";
 
 const COLORS = { sky:'var(--sky)', yellow:'var(--yellow)', orange:'var(--orange)', lime:'var(--lime)', pink:'var(--pink)' };
-
-let SITE = { notice:{ text:'', link:'' }, series:[] };
-try { SITE = JSON.parse(document.getElementById('site-data').textContent); } catch (e) {}
 
 const toastEl = document.getElementById('toast');
 let toastTimer;
@@ -525,9 +467,7 @@ function linkTo(a, url){
   }
 }
 
-// 공지 띠
-(function renderNotice(){
-  const n = SITE.notice || {};
+function renderNotice(n){
   const text = (n.text || '').trim();
   if (!text) return;
   document.getElementById('noticeText').textContent = text;
@@ -537,12 +477,15 @@ function linkTo(a, url){
   else if (/^#/.test(link)) { body.href = link; body.append(' →'); }
   document.getElementById('notice').hidden = false;
   document.getElementById('noticeClose').addEventListener('click', () => { document.getElementById('notice').hidden = true; });
-})();
+}
 
-// 시리즈 카드
-(function renderSeries(){
+function renderSeries(list, failed, channel){
   const grid = document.getElementById('seriesGrid');
-  (SITE.series || []).forEach(s => {
+  if (failed) {
+    grid.innerHTML = '<p class="load-fail">시리즈를 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.</p>';
+    return;
+  }
+  list.forEach(s => {
     const art = document.createElement('article');
     art.className = 'folder';
     art.style.setProperty('--c', COLORS[s.color] || COLORS.sky);
@@ -552,20 +495,37 @@ function linkTo(a, url){
     art.querySelector('.sub').textContent = s.sub || '';
     art.querySelector('p').textContent = s.desc || '';
     if (!s.sub) art.querySelector('.sub').hidden = true;
-    linkTo(art.querySelector('.go'), s.video || CHANNEL_URL);
+    linkTo(art.querySelector('.go'), s.video || channel);
     grid.appendChild(art);
   });
-})();
+}
 
-// 나머지 링크 연결
-document.querySelectorAll('[data-link]').forEach(a => {
-  const key = a.dataset.link;
-  let url = '';
-  if (key === 'subscribe') url = CHANNEL_URL ? CHANNEL_URL + '?sub_confirmation=1' : '';
-  else if (key === 'videos') url = CHANNEL_URL ? CHANNEL_URL + '/videos' : '';
-  else url = VIDEO_URLS[key] || CHANNEL_URL;
-  linkTo(a, url);
-});
+function bindLinks(L){
+  document.querySelectorAll('[data-link]').forEach(a => {
+    const key = a.dataset.link;
+    let url = '';
+    if (key === 'subscribe') url = L.channel ? L.channel + '?sub_confirmation=1' : '';
+    else if (key === 'videos') url = L.channel ? L.channel + '/videos' : '';
+    else url = L[key] || L.channel;
+    linkTo(a, url);
+  });
+}
+
+// data.json 읽어서 화면 그리기
+(async function start(){
+  let data = null;
+  try {
+    const r = await fetch('data.json?v=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) data = await r.json();
+  } catch (e) {}
+  const ok = !!data;
+  data = data || {};
+  const L = Object.assign({ channel:'', rule1:'', rule2:'', rule3:'' }, data.links || {});
+  if (!L.channel) L.channel = FALLBACK_CHANNEL;
+  renderNotice(data.notice || {});
+  renderSeries(Array.isArray(data.series) ? data.series : [], !ok, L.channel);
+  bindLinks(L);
+})();
 
 // 복사
 async function copyText(text){
@@ -606,7 +566,6 @@ document.getElementById('copyTemplate').addEventListener('click', async () => {
   toast(ok ? '제보 양식 복사 완료! 영상 댓글에 붙여 넣어 주세요.' : '복사가 안 됐어요. 직접 복사해 주세요.');
 });
 
-// 지금 보는 구역을 목차에 표시
 const navLinks = document.querySelectorAll('.side nav a, .chips a');
 const io = new IntersectionObserver(entries => {
   entries.forEach(en => {

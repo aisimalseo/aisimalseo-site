@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>관리자 결재실 — AI 시말서</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><line x1='50' y1='20' x2='50' y2='8' stroke='%231B1E1C' stroke-width='5' stroke-linecap='round'/><circle cx='50' cy='8' r='6' fill='%23E5484D' stroke='%231B1E1C' stroke-width='3'/><circle cx='50' cy='58' r='38' fill='%238ED4F5' stroke='%231B1E1C' stroke-width='5'/><rect x='24' y='40' width='52' height='34' rx='15' fill='%23EAF8FF' stroke='%231B1E1C' stroke-width='4'/><ellipse cx='40' cy='56' rx='4.5' ry='6' fill='%231B1E1C'/><ellipse cx='60' cy='56' rx='4.5' ry='6' fill='%231B1E1C'/></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --paper:#F6F3EA; --grid:#D9DFEE; --ink:#1B1E1C;
+  --sky:#8ED4F5; --sky-l:#EAF8FF; --red:#E5484D; --lime:#D7F26B;
+  --yellow:#FFC93C; --orange:#F2994A; --pink:#FFAFB8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased;min-height:100vh;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 2px,transparent 2px),
+    linear-gradient(90deg,var(--grid) 2px,transparent 2px),
+    radial-gradient(var(--grid) 1.6px,transparent 1.8px);
+  background-size:112px 112px,112px 112px,28px 28px;
+  background-position:-2px -2px,-2px -2px,14px 14px;
+}
+a{color:inherit}
+.card{background:#fff;border:2px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:26px}
+.eyebrow{display:inline-block;font-size:13px;font-weight:800;padding:4px 12px;border:2px solid var(--ink);border-radius:99px;background:#fff;margin-bottom:12px}
+.desc{color:#555;font-size:14.5px}
+mark{background:var(--lime);color:inherit;padding:0 .12em;border-radius:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:12px;font-weight:800;font-size:16px;font-family:inherit;text-decoration:none;border:2px solid var(--ink);box-shadow:0 4px 0 var(--ink);cursor:pointer;transition:transform .1s,box-shadow .1s;line-height:1.2;color:var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:0 4px 0 var(--ink)}
+.btn-red{background:var(--red);color:#fff}
+.btn-white{background:#fff}
+.btn-yellow{background:var(--yellow)}
+.btn-sm{padding:8px 14px;font-size:14px;box-shadow:0 3px 0 var(--ink)}
+.btn-block{width:100%;margin-top:16px}
+.linkbtn{background:none;border:none;font:inherit;font-size:14px;font-weight:700;color:#555;text-decoration:underline;cursor:pointer;margin-top:14px}
+
+.field{display:block;text-align:left;margin-top:14px}
+.field>span{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:14px;margin-bottom:6px}
+.field em{font-style:normal;font-weight:600;color:#888}
+input[type=text],input[type=password],textarea{width:100%;font:inherit;font-size:16px;padding:11px 14px;border:2px solid var(--ink);border-radius:10px;background:#fff;outline:none;color:var(--ink)}
+textarea{resize:vertical;min-height:96px}
+input:focus,textarea:focus{box-shadow:0 0 0 3px var(--sky)}
+.bad{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(229,72,77,.25)!important}
+.err{color:var(--red);font-weight:700;font-size:14px;min-height:22px;margin-top:8px}
+
+.stamp{display:inline-grid;place-items:center;width:60px;height:60px;border:3px solid var(--red);border-radius:50%;color:var(--red);font-weight:900;font-size:12px;line-height:1.1;text-align:center;transform:rotate(-12deg)}
+
+/* ---------- 로그인·초기 설정·토큰 ---------- */
+.screen{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login-card{width:100%;max-width:440px;text-align:center;position:relative}
+.login-card h1{font-size:28px;font-weight:900;letter-spacing:-.03em;line-height:1.25}
+.login-card .nenep{width:92px;height:106px;display:block;margin:0 auto 8px}
+.login-card .stamp{position:absolute;right:18px;top:18px}
+.bubble{display:inline-block;position:relative;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:6px 14px;font-weight:800;font-size:14px;box-shadow:3px 3px 0 var(--ink);margin-bottom:10px}
+.bubble::after{content:"";position:absolute;bottom:-9px;left:50%;margin-left:-7px;width:12px;height:12px;background:#fff;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg)}
+.pw-row{position:relative}
+.pw-row input{padding-right:64px}
+.pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;font:inherit;font-size:13px;font-weight:800;color:#555;cursor:pointer;padding:6px}
+.codeline{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--ink);color:var(--lime);padding:12px 14px;border-radius:10px;word-break:break-all;text-align:left;margin-top:16px}
+.steps-mini{text-align:left;font-size:14px;margin:12px 0 0 20px;color:#333}
+.steps-mini li{margin-bottom:4px}
+.steps-mini code{background:var(--sky-l);padding:1px 5px;border-radius:4px;font-size:12.5px}
+.guide{text-align:left;margin-top:18px;border:2px dashed var(--ink);border-radius:12px;padding:10px 14px;background:#FFFBE6}
+.guide summary{font-weight:800;font-size:14px;cursor:pointer}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* ---------- 편집 화면 ---------- */
+.adm-top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center;padding:10px 20px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px}
+.brand svg{width:28px;height:32px}
+.brand .badge{font-size:12px;background:var(--ink);color:var(--yellow);padding:2px 8px;border-radius:6px}
+.adm-wrap{max-width:960px;margin:0 auto;padding:28px 20px 150px}
+.adm-head h1{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.04em;line-height:1.2}
+.warn{margin-top:18px;background:#FFF1F1;border:2px solid var(--red);border-radius:14px;padding:12px 16px;font-weight:700;font-size:14px}
+.block{margin-top:36px}
+.block h2{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+.num{width:32px;height:32px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-size:15px;background:var(--yellow);flex:none}
+.block>.desc{margin-bottom:14px}
+
+.conn{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.conn .ok{font-weight:800}
+.conn .acts{display:flex;gap:8px;flex-wrap:wrap}
+
+.notice-preview{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--yellow);border:2px solid var(--ink);border-radius:12px;padding:10px 16px;font-weight:800;font-size:15px;margin-bottom:14px;text-align:center}
+.notice-preview .tag{flex:none;background:var(--ink);color:var(--yellow);font-size:12px;padding:2px 8px;border-radius:6px}
+.notice-preview.off{background:#fff;border-style:dashed;color:#999;font-weight:600}
+
+.series-edit{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:24px}
+.s-card{position:relative;margin-top:30px;border-radius:0 18px 18px 18px;padding:22px 20px}
+.s-card .tab{position:absolute;top:-32px;left:-2px;padding:4px 16px;border:2px solid var(--ink);border-bottom:none;border-radius:12px 12px 0 0;font-weight:800;font-size:14px;background:var(--c,var(--sky));max-width:calc(100% + 4px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .field{margin-top:0}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{cursor:pointer}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{display:block;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink)}
+.sw input:checked+i{outline:3px solid var(--ink);outline-offset:3px}
+.sw input:focus-visible+i{box-shadow:0 0 0 3px var(--sky)}
+
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:2px solid var(--ink);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.savebar .msg{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#555}
+.dot{width:10px;height:10px;border-radius:50%;background:#ccc;flex:none}
+.dirty .dot{background:var(--red)}
+.saved .dot{background:#2BA84A}
+.dirty .msg{color:var(--ink)}
+.savebar .acts{display:flex;gap:10px}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:15px;opacity:0;transition:.25s;z-index:100;max-width:90vw;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:600px){
+  .card{padding:20px}
+  .row2{grid-template-columns:1fr}
+  .row2 .field+.field{margin-top:14px}
+  .savebar .acts{width:100%}
+  .savebar .acts .btn{flex:1}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="nenep" viewBox="0 0 200 230">
+    <line x1="100" y1="46" x2="100" y2="18" stroke="#1B1E1C" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="100" cy="14" r="9" fill="#E5484D" stroke="#1B1E1C" stroke-width="4"/>
+    <circle cx="22" cy="142" r="16" fill="#8ED4F5" stroke="#1B1E1C" stroke-width="5"/>
+    <circle cx="178" cy="142" r="16" fill="#8ED4F5" stroke="#1B1E1C" stroke-width="5"/>
+    <circle cx="100" cy="126" r="80" fill="#8ED4F5" stroke="#1B1E1C" stroke-width="5"/>
+    <path d="M44 100 A62 62 0 0 1 84 56" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".55"/>
+    <rect x="48" y="80" width="104" height="66" rx="30" fill="#EAF8FF" stroke="#1B1E1C" stroke-width="5"/>
+    <ellipse cx="80" cy="110" rx="8" ry="11" fill="#1B1E1C"/>
+    <ellipse cx="120" cy="110" rx="8" ry="11" fill="#1B1E1C"/>
+    <circle cx="83" cy="106" r="3" fill="#fff"/>
+    <circle cx="123" cy="106" r="3" fill="#fff"/>
+    <ellipse cx="63" cy="128" rx="8" ry="5" fill="#FFAFB8"/>
+    <ellipse cx="137" cy="128" rx="8" ry="5" fill="#FFAFB8"/>
+    <path d="M90 132 Q100 124 110 132" stroke="#1B1E1C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M162 70 q9 12 0 19 q-9 -7 0 -19z" fill="#fff" stroke="#1B1E1C" stroke-width="3"/>
+    <path d="M80 168 L100 179 L120 168 L116 160 L100 167 L84 160Z" fill="#fff" stroke="#1B1E1C" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M93 174 L107 174 L104 184 L96 184Z" fill="#E5484D" stroke="#1B1E1C" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M96 184 L104 184 L112 214 L100 226 L88 214Z" fill="#E5484D" stroke="#1B1E1C" stroke-width="4" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<!-- ① 초기 설정 (해시가 비어 있을 때만) -->
+<div id="screen-setup" class="screen" hidden>
+  <div class="card login-card">
+    <svg class="nenep" aria-hidden="true"><use href="#nenep"/></svg>
+    <span class="eyebrow">초기 설정 · 한 번만</span>
+    <h1>비밀번호 <mark>해시</mark> 만들기</h1>
+    <p class="desc" style="margin-top:8px">비밀번호는 코드에 그대로 적지 않아요. 여기서 만든 해시값만 코드에 넣습니다.</p>
+    <label class="field"><span>사용할 비밀번호 <em>12자 이상</em></span>
+      <div class="pw-row"><input type="password" id="setupPw" autocomplete="new-password"><button type="button" class="pw-toggle" data-for="setupPw">보기</button></div>
+    </label>
+    <div class="err" id="setupErr"></div>
+    <button class="btn btn-yellow btn-block" id="makeHash">해시 만들기</button>
+    <div id="hashOut" hidden>
+      <div class="codeline" id="hashLine"></div>
+      <button class="btn btn-white btn-sm" id="copyHash" style="margin-top:10px">이 줄 복사</button>
+      <ol class="steps-mini">
+        <li>깃허브에서 admin.html 편집(연필 아이콘) 열기</li>
+        <li><code>const PASSWORD_HASH = "";</code> 줄을 복사한 줄로 바꾸고 저장(Commit)</li>
+        <li>1~2분 뒤 이 페이지 새로고침</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ② 로그인 -->
+<div id="screen-login" class="screen" hidden>
+  <form class="card login-card" id="loginForm" autocomplete="off">
+    <span class="stamp">관리자<br>전용</span>
+    <div class="bubble">사장님 맞으시죠…?</div>
+    <svg class="nenep" aria-hidden="true"><use href="#nenep"/></svg>
+    <span class="eyebrow">AI 시말서 · 관리자</span>
+    <h1>관리자 결재실</h1>
+    <label class="field"><span>비밀번호</span>
+      <div class="pw-row"><input type="password" id="loginPw" autocomplete="current-password" autofocus><button type="button" class="pw-toggle" data-for="loginPw">보기</button></div>
+    </label>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-red btn-block" type="submit">결재실 입장</button>
+  </form>
+</div>
+
+<!-- ③ 깃허브 토큰 등록 -->
+<div id="screen-token" class="screen" hidden>
+  <form class="card login-card" id="tokenForm" autocomplete="off">
+    <svg class="nenep" aria-hidden="true"><use href="#nenep"/></svg>
+    <span class="eyebrow">이 브라우저에서 처음 한 번만</span>
+    <h1>깃허브 <mark>열쇠</mark> 등록</h1>
+    <p class="desc" style="margin-top:8px">토큰은 로그인 비밀번호로 암호화해서 이 브라우저에만 저장해요. 파일에는 남지 않아요.</p>
+    <label class="field"><span>깃허브 토큰</span>
+      <div class="pw-row"><input type="password" id="tokenInput" placeholder="github_pat_…" spellcheck="false"><button type="button" class="pw-toggle" data-for="tokenInput">보기</button></div>
+    </label>
+    <div class="err" id="tokenErr"></div>
+    <button class="btn btn-red btn-block" type="submit" id="tokenSubmit">확인하고 저장</button>
+    <details class="guide">
+      <summary>토큰 만드는 법</summary>
+      <ol class="steps-mini">
+        <li>깃허브 → 프로필 사진 → <b>Settings</b></li>
+        <li>맨 아래 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b></li>
+        <li>이름: <code>aisimalseo-admin</code>, 기간: 90일</li>
+        <li>Repository access: <b>Only select repositories</b> → <code>aisimalseo-site</code></li>
+        <li>Permissions의 <b>Contents</b>를 <b>Read and write</b>로</li>
+        <li>Generate token → <code>github_pat_</code>로 시작하는 값 복사</li>
+      </ol>
+    </details>
+    <button type="button" class="linkbtn" id="tokenLogout">로그아웃</button>
+  </form>
+</div>
+
+<!-- ④ 편집 화면 -->
+<div id="screen-editor" hidden>
+  <header class="adm-top">
+    <div class="brand"><svg><use href="#nenep"/></svg>AI 시말서 <span class="badge">관리자</span></div>
+    <button class="btn btn-white btn-sm" id="logout">로그아웃</button>
+  </header>
+
+  <main class="adm-wrap">
+    <div class="adm-head">
+      <span class="eyebrow">관리자 결재실</span>
+      <h1>고치고 저장하면 <mark>홈페이지에 바로</mark> 올라가요.</h1>
+      <p class="desc" style="margin-top:8px">저장하면 깃허브의 data.json이 바뀌고, 1~2분 뒤 홈페이지에 반영돼요.</p>
+    </div>
+    <div class="warn" id="pwWarn" hidden>⚠ 지금 비밀번호가 12자보다 짧아요. admin.html이 공개 저장소에 있으니 더 긴 비밀번호로 바꾸는 걸 추천해요.</div>
+
+    <section class="block">
+      <h2><span class="num">1</span>깃허브 연결</h2>
+      <div class="card conn">
+        <div>
+          <p class="ok" id="connStatus">불러오는 중…</p>
+          <p class="desc" id="connHint"></p>
+        </div>
+        <div class="acts">
+          <button class="btn btn-white btn-sm" id="reload">↻ 새로 불러오기</button>
+          <button class="btn btn-white btn-sm" id="retoken">토큰 다시 등록</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="editArea" hidden>
+      <section class="block">
+        <h2><span class="num">2</span>공지 띠</h2>
+        <p class="desc">홈페이지 맨 위 노란 띠예요. 문구를 비워 두면 띠가 사라져요.</p>
+        <div class="notice-preview" id="noticePreview"></div>
+        <div class="card">
+          <label class="field"><span>공지 문구 <em id="noticeCount">0/60</em></span><input type="text" id="noticeText" maxlength="60" placeholder="예: 새 시말서가 올라왔습니다"></label>
+          <label class="field"><span>연결 링크 <em>선택</em></span><input type="text" id="noticeLink" placeholder="https://… 또는 #rules"></label>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2><span class="num">3</span>링크</h2>
+        <p class="desc">지침 영상 링크를 비워 두면 채널로 연결돼요.</p>
+        <div class="card">
+          <label class="field"><span>유튜브 채널 주소 <em>필수</em></span><input type="text" id="linkChannel" placeholder="https://www.youtube.com/@…"></label>
+          <label class="field"><span>제1조 (돈·시간) 영상</span><input type="text" id="linkRule1" placeholder="https://youtu.be/…"></label>
+          <label class="field"><span>제2조 (원본 보호) 영상</span><input type="text" id="linkRule2" placeholder="https://youtu.be/…"></label>
+          <label class="field"><span>제3조 (의견 먼저) 영상</span><input type="text" id="linkRule3" placeholder="https://youtu.be/…"></label>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2><span class="num">4</span>시리즈 3종</h2>
+        <p class="desc">탭 색을 바꾸면 위쪽 탭에 바로 보여요.</p>
+        <div class="series-edit" id="seriesEdit"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="savebar" id="savebar">
+    <div class="msg"><span class="dot"></span><span id="dirtyMsg">불러오는 중…</span></div>
+    <div class="acts">
+      <button class="btn btn-white btn-sm" id="revert" disabled>되돌리기</button>
+      <button class="btn btn-red btn-sm" id="save" disabled>💾 홈페이지에 저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 로그인 비밀번호 해시 (초기 설정 화면에서 만든 줄로 바꿔 넣기) ===== */
+const PASSWORD_HASH = "5af0261f5a8b72517a9d632b8725038f54dc5ea6051a3979e146504d44ce3d1a";
+/* ====================================================================== */
+const SALT = "ai-simalseo-admin-v1";
+
+// 깃허브 설정
+const REPO = "aisimalseo/aisimalseo-site";
+const BRANCH = "main";
+const FILE = "data.json";
+const SITE_URL = "https://aisimalseo.github.io/aisimalseo-site/";
+const API = "https://api.github.com/repos/" + REPO + "/contents/" + FILE;
+const TOKEN_KEY = "simalseo-gh-token";
+
+const COLORS = { sky:'#8ED4F5', yellow:'#FFC93C', orange:'#F2994A', lime:'#D7F26B', pink:'#FFAFB8' };
+const $ = s => document.querySelector(s);
+
+let PW = null;        // 로그인 비밀번호 (메모리에만, 새로고침하면 사라짐)
+let TOKEN = null;     // 풀어 둔 토큰 (메모리에만)
+let SHA = null;       // 깃허브 data.json의 현재 버전 표시
+let ORIGINAL = null;  // 불러온(또는 마지막으로 저장한) 내용
+let lastSaved = '';
+
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 3000);
+}
+function show(id){
+  ['#screen-setup','#screen-login','#screen-token','#screen-editor'].forEach(s => $(s).hidden = (s !== id));
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+const hhmm = () => { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
+const stamp = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + hhmm(); };
+
+/* ---------- 암호 도구 ---------- */
+async function sha256(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+}
+const hashPw = pw => sha256(SALT + ':' + pw);
+
+function toB64(bytes){
+  let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const fromB64 = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
+async function deriveKey(pw, salt){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name:'PBKDF2', salt, iterations:250000, hash:'SHA-256' }, base, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']);
+}
+async function encryptToken(token, pw){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(pw, salt);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, new TextEncoder().encode(token)));
+  return JSON.stringify({ v:1, salt:toB64(salt), iv:toB64(iv), ct:toB64(ct) });
+}
+async function decryptToken(blob, pw){
+  const o = JSON.parse(blob);
+  const key = await deriveKey(pw, fromB64(o.salt));
+  const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:fromB64(o.iv) }, key, fromB64(o.ct));
+  return new TextDecoder().decode(pt);
+}
+function getStored(){ try { return localStorage.getItem(TOKEN_KEY); } catch (e) { return null; } }
+function setStored(v){ try { localStorage.setItem(TOKEN_KEY, v); return true; } catch (e) { return false; } }
+function clearStored(){ try { localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+
+/* ---------- 깃허브 ---------- */
+async function gh(method, body){
+  const url = method === 'GET' ? API + '?ref=' + BRANCH : API;
+  const headers = { 'Authorization':'Bearer ' + TOKEN, 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' };
+  if (body) headers['Content-Type'] = 'application/json';
+  const r = await fetch(url, { method, headers, cache:'no-store', body: body ? JSON.stringify(body) : undefined });
+  let json = null; try { json = await r.json(); } catch (e) {}
+  return { status:r.status, ok:r.ok, json };
+}
+function isConflict(res){ return res.status === 409 || (res.status === 422 && /sha/i.test((res.json && res.json.message) || '')); }
+function errText(res){
+  const m = (res.json && res.json.message) || '';
+  if (res.status === 401) return '토큰이 만료됐거나 잘못됐어요. "토큰 다시 등록"을 눌러 새 토큰을 넣어 주세요.';
+  if (res.status === 403 && /rate limit/i.test(m)) return '깃허브 요청이 너무 많아요. 잠시 뒤 다시 해 주세요.';
+  if (res.status === 403) return '토큰에 쓰기 권한이 없어요. Contents 권한을 "Read and write"로 만든 토큰이 필요해요.';
+  if (res.status === 404) return '저장소나 data.json을 찾지 못했어요. 토큰이 aisimalseo-site 저장소에 연결돼 있는지, data.json을 올렸는지 확인해 주세요.';
+  if (isConflict(res)) return '그사이 다른 곳에서 data.json이 바뀌었어요. "새로 불러오기"를 누른 뒤 다시 고쳐 주세요.';
+  return '깃허브 오류가 났어요 (코드 ' + res.status + '). 잠시 뒤 다시 해 주세요.';
+}
+
+// 비밀번호 보기/숨기기
+document.querySelectorAll('.pw-toggle').forEach(b => b.addEventListener('click', () => {
+  const inp = document.getElementById(b.dataset.for);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  b.textContent = inp.type === 'password' ? '보기' : '숨김';
+}));
+
+/* ---------- 시작 ---------- */
+(function init(){
+  if (!window.crypto || !crypto.subtle) {
+    show('#screen-login');
+    $('#loginErr').textContent = '이 브라우저에서는 비밀번호 확인이 안 돼요. 크롬·엣지·사파리 최신 버전에서 https 주소로 열어 주세요.';
+    return;
+  }
+  if (!PASSWORD_HASH) { show('#screen-setup'); return; }
+  show('#screen-login');
+})();
+
+/* ---------- 초기 설정 ---------- */
+$('#makeHash').addEventListener('click', async () => {
+  const pw = $('#setupPw').value;
+  if (pw.length < 12) { $('#setupErr').textContent = '공개 저장소에 올리는 파일이라 12자 이상으로 정해 주세요.'; return; }
+  $('#setupErr').textContent = '';
+  $('#hashLine').textContent = 'const PASSWORD_HASH = "' + await hashPw(pw) + '";';
+  $('#hashOut').hidden = false;
+});
+$('#copyHash').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('#hashLine').textContent); toast('복사했어요! admin.html에 붙여 넣어 주세요.'); }
+  catch (e) { toast('복사가 안 됐어요. 글자를 드래그해서 복사해 주세요.'); }
+});
+
+/* ---------- 로그인 ---------- */
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pw = $('#loginPw').value;
+  if ((await hashPw(pw)) !== PASSWORD_HASH) {
+    const f = $('#loginForm');
+    f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake');
+    $('#loginErr').textContent = '비밀번호가 달라요. 네넵이가 문을 못 열어 드려요.';
+    $('#loginPw').select();
+    return;
+  }
+  PW = pw;
+  $('#loginPw').value = '';
+  afterLogin();
+});
+
+async function afterLogin(){
+  const blob = getStored();
+  if (!blob) { showToken(''); return; }
+  try {
+    TOKEN = await decryptToken(blob, PW);
+    openEditor();
+  } catch (e) {
+    showToken('저장된 토큰을 풀 수 없어요. 비밀번호를 바꿨다면 토큰을 다시 등록해 주세요.');
+  }
+}
+
+function logout(){
+  if (isDirty() && !confirm('저장하지 않은 내용이 있어요. 그래도 나갈까요?')) return;
+  PW = null; TOKEN = null;
+  location.reload();
+}
+$('#logout').addEventListener('click', logout);
+$('#tokenLogout').addEventListener('click', logout);
+
+/* ---------- 토큰 등록 ---------- */
+function showToken(msg){
+  show('#screen-token');
+  $('#tokenErr').textContent = msg || '';
+  $('#tokenInput').value = '';
+  $('#tokenInput').focus();
+}
+$('#tokenForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const t = $('#tokenInput').value.trim();
+  if (t.length < 20) { $('#tokenErr').textContent = '토큰을 끝까지 붙여 넣어 주세요.'; return; }
+  const btn = $('#tokenSubmit');
+  btn.disabled = true; btn.textContent = '깃허브에 확인하는 중…';
+  TOKEN = t;
+  try {
+    const res = await gh('GET');
+    if (!res.ok) { TOKEN = null; $('#tokenErr').textContent = errText(res); return; }
+    const saved = setStored(await encryptToken(t, PW));
+    $('#tokenInput').value = '';
+    if (!saved) toast('이 브라우저가 저장을 막아서, 이번 접속에서만 토큰을 써요.');
+    openEditor(res);
+  } catch (err) {
+    TOKEN = null;
+    $('#tokenErr').textContent = '깃허브에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.';
+  } finally {
+    btn.disabled = false; btn.textContent = '확인하고 저장';
+  }
+});
+$('#retoken').addEventListener('click', () => {
+  if (!confirm('저장된 토큰을 지우고 새로 등록할까요?')) return;
+  if (isDirty() && !confirm('저장하지 않은 내용이 사라져요. 계속할까요?')) return;
+  clearStored(); TOKEN = null; ORIGINAL = null;
+  showToken('');
+});
+
+/* ---------- 편집 화면 ---------- */
+function openEditor(preloaded){
+  show('#screen-editor');
+  $('#pwWarn').hidden = !(PW && PW.length < 12);
+  loadRemote(preloaded);
+}
+function setConn(status, hint){ $('#connStatus').textContent = status; $('#connHint').textContent = hint || ''; }
+
+function decodeContent(b64){
+  return new TextDecoder().decode(fromB64(b64.replace(/\s/g, '')));
+}
+function normalize(d){
+  d = d && typeof d === 'object' ? d : {};
+  d.notice = Object.assign({ text:'', link:'' }, d.notice || {});
+  d.links = Object.assign({ channel:'', rule1:'', rule2:'', rule3:'' }, d.links || {});
+  if (!Array.isArray(d.series)) d.series = [];
+  return d;
+}
+
+async function loadRemote(res){
+  setConn('깃허브에서 불러오는 중…', REPO + ' (' + BRANCH + ')');
+  try {
+    if (!res) res = await gh('GET');
+  } catch (e) {
+    setConn('깃허브에 연결하지 못했어요', '인터넷 연결을 확인한 뒤 "새로 불러오기"를 눌러 주세요.');
+    return;
+  }
+  if (!res.ok) { setConn('불러오기 실패', errText(res)); $('#save').disabled = true; return; }
+  let data;
+  try { data = normalize(JSON.parse(decodeContent(res.json.content))); }
+  catch (e) { setConn('data.json 내용이 깨져 있어요', '깃허브에서 data.json을 직접 열어 괄호·쉼표가 맞는지 확인해 주세요.'); return; }
+  SHA = res.json.sha;
+  ORIGINAL = clone(data);
+  lastSaved = '';
+  buildSeries(data.series.length);
+  fillForm(data);
+  setConn('✅ 깃허브 연결됨 · ' + hhmm() + ' 불러옴', REPO + ' (' + BRANCH + ') · 시리즈 ' + data.series.length + '개');
+  $('#editArea').hidden = false;
+  $('#save').disabled = false;
+  refresh();
+}
+$('#reload').addEventListener('click', () => {
+  if (isDirty() && !confirm('저장하지 않은 내용이 사라져요. 새로 불러올까요?')) return;
+  loadRemote();
+});
+
+function buildSeries(n){
+  const box = $('#seriesEdit');
+  box.innerHTML = '';
+  for (let i = 0; i < n; i++){
+    const card = document.createElement('div');
+    card.className = 'card s-card';
+    card.innerHTML =
+      '<span class="tab"></span>' +
+      '<div class="row2">' +
+        '<label class="field"><span>탭 이름</span><input type="text" data-f="tab" maxlength="10"></label>' +
+        '<label class="field"><span>시리즈 이름</span><input type="text" data-f="name" maxlength="12"></label>' +
+      '</div>' +
+      '<label class="field"><span>부제</span><input type="text" data-f="sub" maxlength="14"></label>' +
+      '<label class="field"><span>설명 <em class="cnt">0/160</em></span><textarea data-f="desc" maxlength="160"></textarea></label>' +
+      '<label class="field"><span>대표 영상 링크 <em>비우면 채널로 연결</em></span><input type="text" data-f="video" placeholder="https://youtu.be/…"></label>' +
+      '<div class="field"><span>탭 색</span><div class="swatches">' +
+        Object.keys(COLORS).map(k => '<label class="sw" title="' + k + '"><input type="radio" name="c' + i + '" value="' + k + '"><i style="background:' + COLORS[k] + '"></i></label>').join('') +
+      '</div></div>';
+    box.appendChild(card);
+  }
+}
+
+function fillForm(d){
+  $('#noticeText').value = d.notice.text || '';
+  $('#noticeLink').value = d.notice.link || '';
+  $('#linkChannel').value = d.links.channel || '';
+  $('#linkRule1').value = d.links.rule1 || '';
+  $('#linkRule2').value = d.links.rule2 || '';
+  $('#linkRule3').value = d.links.rule3 || '';
+  document.querySelectorAll('.s-card').forEach((card, i) => {
+    const s = d.series[i] || {};
+    card.querySelectorAll('[data-f]').forEach(el => el.value = s[el.dataset.f] || '');
+    const r = card.querySelector('input[value="' + (COLORS[s.color] ? s.color : 'sky') + '"]');
+    if (r) r.checked = true;
+  });
+  document.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
+}
+
+function readForm(){
+  const d = clone(ORIGINAL);
+  d.notice = { text: $('#noticeText').value.trim(), link: $('#noticeLink').value.trim() };
+  d.links = Object.assign(d.links || {}, {
+    channel: $('#linkChannel').value.trim(),
+    rule1: $('#linkRule1').value.trim(),
+    rule2: $('#linkRule2').value.trim(),
+    rule3: $('#linkRule3').value.trim()
+  });
+  document.querySelectorAll('.s-card').forEach((card, i) => {
+    const s = d.series[i];
+    card.querySelectorAll('[data-f]').forEach(el => s[el.dataset.f] = el.value.trim());
+    const c = card.querySelector('input[type=radio]:checked');
+    if (c) s.color = c.value;
+  });
+  return d;
+}
+
+function isDirty(){
+  if (!ORIGINAL) return false;
+  return JSON.stringify(readForm()) !== JSON.stringify(ORIGINAL);
+}
+
+function refresh(){
+  const text = $('#noticeText').value.trim();
+  const pv = $('#noticePreview');
+  $('#noticeCount').textContent = $('#noticeText').value.length + '/60';
+  if (text) {
+    pv.className = 'notice-preview';
+    pv.innerHTML = '<span class="tag">공지</span><span></span>';
+    pv.lastChild.textContent = text + ($('#noticeLink').value.trim() ? ' →' : '');
+  } else {
+    pv.className = 'notice-preview off';
+    pv.textContent = '공지 없음 — 홈페이지에서 띠가 숨겨져요';
+  }
+  document.querySelectorAll('.s-card').forEach(card => {
+    const c = card.querySelector('input[type=radio]:checked');
+    card.style.setProperty('--c', COLORS[c ? c.value : 'sky']);
+    const tab = card.querySelector('[data-f=tab]').value.trim();
+    const name = card.querySelector('[data-f=name]').value.trim();
+    card.querySelector('.tab').textContent = '📁 ' + (tab || '탭') + ' · ' + (name || '이름 없음');
+    card.querySelector('.cnt').textContent = card.querySelector('textarea').value.length + '/160';
+  });
+  const dirty = isDirty();
+  const bar = $('#savebar');
+  bar.classList.toggle('dirty', dirty);
+  bar.classList.toggle('saved', !dirty && !!lastSaved);
+  $('#dirtyMsg').textContent = !ORIGINAL ? '불러오는 중…'
+    : dirty ? '고친 내용이 있어요 (아직 저장 안 됨)'
+    : lastSaved ? lastSaved + ' 저장됨 · 1~2분 뒤 홈페이지에 반영'
+    : '고친 내용 없음';
+  $('#revert').disabled = !dirty;
+}
+$('#editArea').addEventListener('input', refresh);
+$('#editArea').addEventListener('change', refresh);
+
+$('#revert').addEventListener('click', () => {
+  if (!confirm('불러온 상태로 되돌릴까요?')) return;
+  fillForm(ORIGINAL); refresh(); toast('되돌렸어요.');
+});
+
+function validate(d){
+  document.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
+  const errs = [];
+  const http = v => /^https?:\/\//.test(v);
+  const nl = d.notice.link;
+  if (nl && !http(nl) && !/^#/.test(nl)) { $('#noticeLink').classList.add('bad'); errs.push('공지 링크는 https:// 또는 #으로 시작해야 해요.'); }
+  if (nl && !d.notice.text) { $('#noticeText').classList.add('bad'); errs.push('링크만 있고 공지 문구가 비어 있어요.'); }
+  if (!http(d.links.channel)) { $('#linkChannel').classList.add('bad'); errs.push('채널 주소는 https://로 시작해야 해요.'); }
+  ['rule1','rule2','rule3'].forEach((k, i) => {
+    if (d.links[k] && !http(d.links[k])) { $('#linkRule' + (i + 1)).classList.add('bad'); errs.push('제' + (i + 1) + '조 영상 링크는 https://로 시작해야 해요.'); }
+  });
+  document.querySelectorAll('.s-card').forEach((card, i) => {
+    const s = d.series[i];
+    if (!s.name) { card.querySelector('[data-f=name]').classList.add('bad'); errs.push((i + 1) + '번째 시리즈 이름이 비어 있어요.'); }
+    if (s.video && !http(s.video)) { card.querySelector('[data-f=video]').classList.add('bad'); errs.push((i + 1) + '번째 영상 링크는 https://로 시작해야 해요.'); }
+  });
+  return errs;
+}
+
+// 저장 → 깃허브 data.json 바로 수정
+$('#save').addEventListener('click', async () => {
+  if (!ORIGINAL || !TOKEN) return;
+  const d = readForm();
+  const errs = validate(d);
+  if (errs.length) { toast(errs[0]); return; }
+  if (!isDirty()) { toast('고친 내용이 없어요.'); return; }
+  const btn = $('#save');
+  btn.disabled = true; btn.textContent = '저장하는 중…';
+  try {
+    const content = toB64(new TextEncoder().encode(JSON.stringify(d, null, 2) + '\n'));
+    const res = await gh('PUT', { message:'관리자 저장 (' + stamp() + ')', content, sha:SHA, branch:BRANCH });
+    if (!res.ok) { toast(errText(res)); if (isConflict(res)) setConn('⚠ 다른 곳에서 먼저 바뀌었어요', errText(res)); return; }
+    SHA = res.json.content.sha;
+    ORIGINAL = clone(d);
+    lastSaved = hhmm();
+    refresh();
+    toast('결재 완료! 1~2분 뒤 홈페이지에 반영돼요.');
+  } catch (e) {
+    toast('깃허브에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.');
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 홈페이지에 저장';
+  }
+});
+
+window.addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+</script>
+</body>
+</html>

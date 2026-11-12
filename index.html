@@ -13,6 +13,7 @@
   --yellow:#FFC93C; --orange:#F2994A; --pink:#FFAFB8;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased}
 a{color:inherit}
@@ -25,6 +26,12 @@ a{color:inherit}
   background-size:112px 112px,112px 112px,28px 28px;
   background-position:-2px -2px,-2px -2px,14px 14px;
 }
+
+/* ---------- 공지 띠 ---------- */
+.notice{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--yellow);border-bottom:2px solid var(--ink);padding:10px 52px 10px 16px;font-weight:800;font-size:15px;position:relative;margin-left:250px;text-align:center;line-height:1.4}
+.notice-body{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.notice .tag{flex:none;background:var(--ink);color:var(--yellow);font-size:12px;padding:2px 8px;border-radius:6px}
+.notice-close{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:none;background:none;font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
 
 /* ---------- 왼쪽 목차 (데스크톱) ---------- */
 .side{position:fixed;left:16px;top:16px;width:212px;z-index:50;display:flex;flex-direction:column;gap:12px}
@@ -69,7 +76,7 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
 .hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
 .hero .eyebrow{display:table;margin-bottom:14px}
-.made-badge{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:7px 16px;font-weight:800;font-size:15px;line-height:1.35;box-shadow:3px 3px 0 var(--ink);transform:rotate(-1.5deg);margin-bottom:20px}
+.made-badge{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:7px 16px;font-weight:800;font-size:15px;line-height:1.35;box-shadow:3px 3px 0 var(--ink);transform:rotate(-1.5deg);margin-bottom:20px;text-decoration:none}
 .made-badge .ico{flex:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;font-size:12px}
 .hero h1{font-size:clamp(40px,6.6vw,82px);font-weight:900;letter-spacing:-.05em;line-height:1.08}
 .hero .lead{margin-top:22px}
@@ -168,7 +175,8 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 @media (max-width:900px){
   .side{display:none}
   .topbar{display:block}
-  main{margin-left:0}
+  main,.notice{margin-left:0}
+  .notice{font-size:14px;justify-content:flex-start;text-align:left}
   .sec{padding:72px 20px}
   .hero{min-height:auto;padding-top:40px}
   .hero-grid,.report-grid{grid-template-columns:1fr}
@@ -219,6 +227,12 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </symbol>
 </svg>
 
+<!-- 공지 띠 (내용은 아래 site-data 보관함에서 읽어 옴) -->
+<div class="notice" id="notice" hidden>
+  <a class="notice-body" id="noticeBody"><span class="tag">공지</span><span id="noticeText"></span></a>
+  <button class="notice-close" id="noticeClose" aria-label="공지 닫기">×</button>
+</div>
+
 <!-- 왼쪽 목차 (데스크톱) -->
 <aside class="side">
   <div class="side-card">
@@ -253,7 +267,6 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 
 <!-- 1. 표지 -->
 <section id="cover" class="sec hero grid-bg">
-  <!-- 장식: 클립 · 연필 · 포스트잇 -->
   <svg class="doodle hide-m" style="left:4%;top:18%" width="34" height="70" viewBox="0 0 34 70"><path d="M10 20 V54 a7 7 0 0 0 14 0 V12 a10 10 0 0 0 -20 0 V50" fill="none" stroke="#7C8BB8" stroke-width="4" stroke-linecap="round"/></svg>
   <svg class="doodle" style="right:6%;bottom:8%;animation-delay:-2s" width="90" height="22" viewBox="0 0 90 22"><rect x="2" y="4" width="66" height="14" fill="#FFC93C" stroke="#1B1E1C" stroke-width="2"/><path d="M68 4 L86 11 L68 18Z" fill="#F6D7B0" stroke="#1B1E1C" stroke-width="2"/><rect x="2" y="4" width="10" height="14" fill="#FFAFB8" stroke="#1B1E1C" stroke-width="2"/></svg>
   <svg class="doodle hide-m" style="left:38%;bottom:6%;animation-delay:-4s" width="54" height="54" viewBox="0 0 54 54"><rect x="3" y="3" width="48" height="48" fill="#D7F26B" stroke="#1B1E1C" stroke-width="2" transform="rotate(-6 27 27)"/><line x1="12" y1="20" x2="40" y2="17" stroke="#1B1E1C" stroke-width="2"/><line x1="13" y1="30" x2="36" y2="28" stroke="#1B1E1C" stroke-width="2"/></svg>
@@ -261,7 +274,7 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   <div class="wrap hero-grid">
     <div>
       <span class="eyebrow">결재 서류 제 2026-001호</span>
-      <a href="#howto" class="made-badge" style="text-decoration:none"><span class="ico">⚡</span>이 페이지는 0원, 20분 만에 AI가 만들었습니다</a>
+      <a href="#howto" class="made-badge"><span class="ico">⚡</span>이 페이지는 0원, 20분 만에 AI가 만들었습니다</a>
       <h1>AI 인턴이<br>또 <mark>사고</mark>를<br>쳤습니다.</h1>
       <p class="lead">AI 인턴 <b>‘네넵이’</b>가 일하다 낸 진짜 사고를 시말서로 정식 고백하는 유튜브 채널입니다. 사장님은 감독만 하고, 영상은 AI가 처음부터 끝까지 만듭니다.</p>
       <div class="hero-btns">
@@ -289,36 +302,13 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
   </div>
 </section>
 
-<!-- 2. 시리즈 3종 -->
+<!-- 2. 시리즈 3종 (카드는 site-data 보관함에서 그림) -->
 <section id="series" class="sec">
   <div class="wrap">
     <span class="eyebrow">시리즈 안내</span>
     <h2>서류철은 <mark>세 개</mark>입니다.</h2>
     <p class="lead">사고를 고백하고, 실제로 일을 끝내고, 다시는 안 그러도록 규칙을 만듭니다.</p>
-
-    <div class="series-grid">
-      <article class="folder" style="--c:var(--sky)">
-        <span class="tab">📁 제1철</span>
-        <h3>시말서</h3>
-        <span class="sub">사고 고백</span>
-        <p>네넵이가 일하다 낸 실제 사고를 경위부터 원인, 재발 방지 대책까지 시말서로 고백합니다.</p>
-        <a class="go" data-link="simal">대표 영상 보기 →</a>
-      </article>
-      <article class="folder" style="--c:var(--yellow)">
-        <span class="tab">📁 제2철</span>
-        <h3>실전편</h3>
-        <span class="sub">따라 하기</span>
-        <p>AI로 실제 일을 끝내는 과정을 그대로 보여 줍니다. 지금 보고 계신 이 홈페이지 만들기 같은 것도요.</p>
-        <a class="go" data-link="silleon">대표 영상 보기 →</a>
-      </article>
-      <article class="folder" style="--c:var(--orange)">
-        <span class="tab">📁 제3철</span>
-        <h3>사장편</h3>
-        <span class="sub">AI 부리는 법</span>
-        <p>AI를 제대로 부리는 법과 사장님이 직접 만든 규칙 이야기를 들려 드립니다.</p>
-        <a class="go" data-link="sajang">대표 영상 보기 →</a>
-      </article>
-    </div>
+    <div class="series-grid" id="seriesGrid"></div>
   </div>
 </section>
 
@@ -440,18 +430,59 @@ AI 이름:
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- ===== 내용 보관함: 관리자 페이지(admin.html)가 이 부분만 고칩니다 ===== -->
+<script id="site-data" type="application/json">
+{
+  "notice": {
+    "text": "홈페이지 오픈! 영상에 나온 사장님 지침, 여기서 복사해 가세요.",
+    "link": "#rules"
+  },
+  "series": [
+    {
+      "key": "simal",
+      "tab": "제1철",
+      "name": "시말서",
+      "sub": "사고 고백",
+      "desc": "네넵이가 일하다 낸 실제 사고를 경위부터 원인, 재발 방지 대책까지 시말서로 고백합니다.",
+      "video": "",
+      "color": "sky"
+    },
+    {
+      "key": "silleon",
+      "tab": "제2철",
+      "name": "실전편",
+      "sub": "따라 하기",
+      "desc": "AI로 실제 일을 끝내는 과정을 그대로 보여 줍니다. 지금 보고 계신 이 홈페이지 만들기 같은 것도요.",
+      "video": "",
+      "color": "yellow"
+    },
+    {
+      "key": "sajang",
+      "tab": "제3철",
+      "name": "사장편",
+      "sub": "AI 부리는 법",
+      "desc": "AI를 제대로 부리는 법과 사장님이 직접 만든 규칙 이야기를 들려 드립니다.",
+      "video": "",
+      "color": "orange"
+    }
+  ]
+}
+</script>
+
 <script>
-/* ===== 여기만 채우면 링크가 전부 연결됩니다 ===== */
+/* ===== 채널·지침 영상 주소는 여기서 (시리즈 영상은 관리자 페이지에서) ===== */
 const CHANNEL_URL = "";   // 예: "https://www.youtube.com/@채널핸들"
 const VIDEO_URLS = {
-  simal:   "",  // 시말서 대표 영상
-  silleon: "",  // 실전편 대표 영상
-  sajang:  "",  // 사장편 대표 영상
-  rule1:   "",  // 제1조가 나온 영상
-  rule2:   "",  // 제2조가 나온 영상
-  rule3:   ""   // 제3조가 나온 영상
+  rule1: "",  // 제1조가 나온 영상
+  rule2: "",  // 제2조가 나온 영상
+  rule3: ""   // 제3조가 나온 영상
 };
-/* ============================================== */
+/* ================================================================ */
+
+const COLORS = { sky:'var(--sky)', yellow:'var(--yellow)', orange:'var(--orange)', lime:'var(--lime)', pink:'var(--pink)' };
+
+let SITE = { notice:{ text:'', link:'' }, series:[] };
+try { SITE = JSON.parse(document.getElementById('site-data').textContent); } catch (e) {}
 
 const toastEl = document.getElementById('toast');
 let toastTimer;
@@ -462,19 +493,55 @@ function toast(msg){
   toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
 }
 
-// 링크 연결 (주소가 비어 있으면 안내 문구 표시)
-document.querySelectorAll('[data-link]').forEach(a => {
-  const key = a.dataset.link;
-  let url = "";
-  if (key === 'subscribe') url = CHANNEL_URL ? CHANNEL_URL + '?sub_confirmation=1' : '';
-  else if (key === 'videos') url = CHANNEL_URL ? CHANNEL_URL + '/videos' : '';
-  else url = VIDEO_URLS[key] || CHANNEL_URL;
+function linkTo(a, url){
   if (url) {
     a.href = url; a.target = '_blank'; a.rel = 'noopener';
   } else {
     a.href = '#';
-    a.addEventListener('click', e => { e.preventDefault(); toast('채널 주소 준비 중이에요. 곧 결재 올리겠습니다!'); });
+    a.addEventListener('click', e => { e.preventDefault(); toast('주소 준비 중이에요. 곧 결재 올리겠습니다!'); });
   }
+}
+
+// 공지 띠
+(function renderNotice(){
+  const n = SITE.notice || {};
+  const text = (n.text || '').trim();
+  if (!text) return;
+  document.getElementById('noticeText').textContent = text;
+  const body = document.getElementById('noticeBody');
+  const link = (n.link || '').trim();
+  if (/^https?:\/\//.test(link)) { body.href = link; body.target = '_blank'; body.rel = 'noopener'; body.innerHTML += ' →'; }
+  else if (/^#/.test(link)) { body.href = link; body.innerHTML += ' →'; }
+  document.getElementById('notice').hidden = false;
+  document.getElementById('noticeClose').addEventListener('click', () => { document.getElementById('notice').hidden = true; });
+})();
+
+// 시리즈 카드
+(function renderSeries(){
+  const grid = document.getElementById('seriesGrid');
+  (SITE.series || []).forEach(s => {
+    const art = document.createElement('article');
+    art.className = 'folder';
+    art.style.setProperty('--c', COLORS[s.color] || COLORS.sky);
+    art.innerHTML = '<span class="tab"></span><h3></h3><span class="sub"></span><p></p><a class="go">대표 영상 보기 →</a>';
+    art.querySelector('.tab').textContent = '📁 ' + (s.tab || '');
+    art.querySelector('h3').textContent = s.name || '';
+    art.querySelector('.sub').textContent = s.sub || '';
+    art.querySelector('p').textContent = s.desc || '';
+    if (!s.sub) art.querySelector('.sub').hidden = true;
+    linkTo(art.querySelector('.go'), s.video || CHANNEL_URL);
+    grid.appendChild(art);
+  });
+})();
+
+// 나머지 링크 연결
+document.querySelectorAll('[data-link]').forEach(a => {
+  const key = a.dataset.link;
+  let url = '';
+  if (key === 'subscribe') url = CHANNEL_URL ? CHANNEL_URL + '?sub_confirmation=1' : '';
+  else if (key === 'videos') url = CHANNEL_URL ? CHANNEL_URL + '/videos' : '';
+  else url = VIDEO_URLS[key] || CHANNEL_URL;
+  linkTo(a, url);
 });
 
 // 복사

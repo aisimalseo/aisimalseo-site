@@ -5,8 +5,8 @@
   },
   "links": {
     "channel": "https://www.youtube.com/@aisimalseo",
-    "rule1": "",
-    "rule2": "",
+    "rule1": "https://youtu.be/BYrt8vxQzTY",
+    "rule2": "https://youtu.be/MWmq-Cae4aU",
     "rule3": ""
   },
   "series": [
@@ -34,7 +34,7 @@
       "name": "사장편",
       "sub": "AI 부리는 법",
       "desc": "AI를 제대로 부리는 법과 사장님이 직접 만든 규칙 이야기를 들려 드립니다.",
-      "video": "",
+      "video": "https://youtu.be/Ol7jLnbUOKc",
       "color": "orange"
     }
   ]

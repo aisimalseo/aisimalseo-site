@@ -128,6 +128,15 @@ mark{background:var(--lime);color:inherit;padding:0 .14em;border-radius:12px}
 .folder .go{margin-top:20px;font-weight:800;font-size:15px;text-decoration:none;align-self:flex-start;border-bottom:2px solid var(--ink)}
 .load-fail{grid-column:1/-1;background:#fff;border:2px dashed var(--ink);border-radius:14px;padding:22px;font-weight:700;color:#555}
 
+/* 시리즈 카드 안 편 목록 */
+.eps{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.ep{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap;border:2px solid var(--ink);border-radius:12px;padding:9px 12px;font-weight:800;font-size:14.5px;line-height:1.4;background:var(--sky-l);color:var(--ink);text-decoration:none}
+a.ep{box-shadow:0 3px 0 var(--ink);transition:transform .1s,box-shadow .1s}
+a.ep:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.ep .ep-state{flex:none;font-size:12px;font-weight:800;background:var(--ink);color:#fff;padding:1px 9px;border-radius:6px}
+.ep.soon{border-style:dashed;background:#fff;color:#444;font-weight:700}
+.ep.soon .ep-state{background:var(--c);color:var(--ink);border:2px solid var(--ink)}
+
 /* ---------- 사장님 지침 ---------- */
 .rules{background:var(--orange);color:#fff}
 .rules .eyebrow{color:var(--ink)}
@@ -622,6 +631,32 @@ function renderNotice(n){
   document.getElementById('noticeClose').addEventListener('click', () => { document.getElementById('notice').hidden = true; });
 }
 
+// 시리즈 카드 안 편 목록 (episodes가 있는 카드에만 그림)
+// 영상 주소가 있으면 누르는 링크, 없으면 점선 칸에 status(예: 11/25 공개 예정)만 보여 줌
+function renderEpisodes(art, episodes){
+  const list = Array.isArray(episodes) ? episodes : [];
+  if (!list.length) return;
+  const ul = document.createElement('ul');
+  ul.className = 'eps';
+  list.forEach(ep => {
+    ep = ep || {};
+    const url = /^https?:\/\//.test((ep.video || '').trim()) ? ep.video.trim() : '';
+    const li = document.createElement('li');
+    const el = document.createElement(url ? 'a' : 'div');
+    el.className = url ? 'ep' : 'ep soon';
+    const title = document.createElement('span');
+    title.textContent = ep.title || '';
+    const state = document.createElement('span');
+    state.className = 'ep-state';
+    state.textContent = url ? '영상 보기 →' : ((ep.status || '').trim() || '공개 예정');
+    el.append(title, state);
+    if (url) linkTo(el, url);
+    li.appendChild(el);
+    ul.appendChild(li);
+  });
+  art.insertBefore(ul, art.querySelector('.go'));
+}
+
 function renderSeries(list, failed, channel){
   const grid = document.getElementById('seriesGrid');
   if (failed) {
@@ -638,6 +673,7 @@ function renderSeries(list, failed, channel){
     art.querySelector('.sub').textContent = s.sub || '';
     art.querySelector('p').textContent = s.desc || '';
     if (!s.sub) art.querySelector('.sub').hidden = true;
+    renderEpisodes(art, s.episodes);
     linkTo(art.querySelector('.go'), s.video || channel);
     grid.appendChild(art);
   });
